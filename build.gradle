@@ -1,11 +1,11 @@
 plugins {
-	id 'org.springframework.boot' version '2.5.4'
+	id 'org.springframework.boot' version '2.5.5'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
 }
 
-group = 'org.eu.nl.dndmapp'
-version = '0.0.1-SNAPSHOT'
+group = 'org.eu.nl.dnd-mapp'
+version = '0.0.1'
 sourceCompatibility = '11'
 
 configurations {
@@ -19,18 +19,23 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-mail'
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.5.4'
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc:2.5.4'
+	implementation 'org.springframework.boot:spring-boot-starter-mail:2.5.4'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:2.5.4'
+	implementation 'org.springframework.boot:spring-boot-starter-web:2.5.4'
+
+	developmentOnly 'org.springframework.boot:spring-boot-devtools:2.5.4'
+
+	compileOnly 'org.projectlombok:lombok'
 	
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	runtimeOnly 'com.h2database:h2:1.4.200'
+	runtimeOnly 'mysql:mysql-connector-java:8.0.25'
 	
-	runtimeOnly 'com.h2database:h2'
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor:2.5.4'
+	annotationProcessor 'org.projectlombok:lombok'
 	
-	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-	
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test:2.5.4'
 }
 
 test {
