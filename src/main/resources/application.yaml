@@ -2,7 +2,7 @@ logging:
   level:
     web: 'info'
 server:
-  address: '000.000.000.00'
+  address: '000.000.000.000'
   port: 0000
 spring:
   datasource:
