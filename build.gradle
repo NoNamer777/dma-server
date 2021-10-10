@@ -1,7 +1,7 @@
 plugins {
-	id 'org.springframework.boot' version '2.5.5'
-	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-	id 'java'
+    id 'org.springframework.boot' version '2.5.5'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
 }
 
 group = 'org.eu.nl.dnd-mapp'
@@ -9,35 +9,34 @@ version = '0.0.1'
 sourceCompatibility = '11'
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.5.4'
-	implementation 'org.springframework.boot:spring-boot-starter-jdbc:2.5.4'
-	implementation 'org.springframework.boot:spring-boot-starter-mail:2.5.4'
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:2.5.4'
-	implementation 'org.springframework.boot:spring-boot-starter-web:2.5.4'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.5.5'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc:2.5.5'
+    implementation 'org.springframework.boot:spring-boot-starter-mail:2.5.5'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:2.5.5'
+    implementation 'org.springframework.boot:spring-boot-starter-web:2.5.5'
 
-	developmentOnly 'org.springframework.boot:spring-boot-devtools:2.5.4'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools:2.5.5'
 
-	compileOnly 'org.projectlombok:lombok'
-	
-	runtimeOnly 'com.h2database:h2:1.4.200'
-	runtimeOnly 'mysql:mysql-connector-java:8.0.25'
-	
-	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor:2.5.4'
-	annotationProcessor 'org.projectlombok:lombok'
-	
-	testImplementation 'org.springframework.boot:spring-boot-starter-test:2.5.4'
+    compileOnly 'org.projectlombok:lombok:1.18.20'
+
+    runtimeOnly 'mysql:mysql-connector-java:8.0.25'
+
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor:2.5.5'
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.5.5'
 }
 
 test {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
