@@ -24,6 +24,8 @@ public class DmaEntity {
     private UUID id;
 
     public DmaEntity(String id) {
+        if (id == null) return;
+
         this.id = UUID.fromString(id);
     }
 
