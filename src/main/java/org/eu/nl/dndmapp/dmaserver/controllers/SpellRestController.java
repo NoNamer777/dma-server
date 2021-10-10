@@ -3,6 +3,7 @@ package org.eu.nl.dndmapp.dmaserver.controllers;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.eu.nl.dndmapp.dmaserver.models.RequestBodyExtractor;
 import org.eu.nl.dndmapp.dmaserver.models.entities.Spell;
+import org.eu.nl.dndmapp.dmaserver.models.enums.MagicSchool;
 import org.eu.nl.dndmapp.dmaserver.models.exceptions.EntityMismatchException;
 import org.eu.nl.dndmapp.dmaserver.models.exceptions.EntityNotFoundException;
 import org.eu.nl.dndmapp.dmaserver.models.exceptions.UniqueEntityException;
@@ -98,6 +99,9 @@ public class SpellRestController {
         if (newData.getLevel() != null && !original.getLevel().equals(newData.getLevel())) {
             original.setLevel(newData.getLevel());
         }
+        if (newData.getMagicSchool() != null && !original.getMagicSchool().equals(newData.getMagicSchool())) {
+            original.setMagicSchool(newData.getMagicSchool());
+        }
         if (newData.getRitual() != null && !original.getRitual().equals(newData.getRitual())) {
             original.setRitual(newData.getRitual());
         }
@@ -116,6 +120,7 @@ public class SpellRestController {
         String id = RequestBodyExtractor.getText(spellData, "id");
         String name = RequestBodyExtractor.getText(spellData, "name");
         Integer level = RequestBodyExtractor.getInteger(spellData, "level");
+        MagicSchool magicSchool = MagicSchool.parse(RequestBodyExtractor.getText(spellData, "magicSchool"));
         Boolean ritual = RequestBodyExtractor.getBoolean(spellData, "ritual");
         String castingTime = RequestBodyExtractor.getText(spellData, "castingTime");
         String range = RequestBodyExtractor.getText(spellData, "range");
@@ -126,6 +131,7 @@ public class SpellRestController {
 
         spell.setName(name);
         spell.setLevel(level);
+        spell.setMagicSchool(magicSchool);
         spell.setRitual(ritual);
         spell.setCastingTime(castingTime);
         spell.setRange(range);

@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.eu.nl.dndmapp.dmaserver.models.NamedEntity;
+import org.eu.nl.dndmapp.dmaserver.models.converters.MagicSchoolConverter;
+import org.eu.nl.dndmapp.dmaserver.models.enums.MagicSchool;
 
 import javax.persistence.*;
 
@@ -22,6 +24,10 @@ public class Spell extends NamedEntity {
 
     @Column(name = "`level`")
     private Integer level = 0;
+
+    @Column(name = "`magic_school`")
+    @Convert(converter = MagicSchoolConverter.class)
+    private MagicSchool magicSchool;
 
     @Column(name = "`ritual`")
     private Boolean ritual = false;
