@@ -43,7 +43,6 @@ public class SpellRestController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteSpell(@PathVariable("id") String id) {
         UUID spellId = UUID.fromString(id);
-
         boolean isSpellDeleted = spellsService.deleteSpell(spellId);
 
         return ResponseEntity.ok(isSpellDeleted);
@@ -54,16 +53,17 @@ public class SpellRestController {
         Spell requestSpell = extractSpell(data);
         Spell spellFoundByName = spellsService.getSpellByName(requestSpell.getName());
 
-        if (spellFoundByName != null) {
-            throw new UniqueEntityException(String.format("A Spell already exists with the name: '%s'", requestSpell.getName()));
-        }
+        if (spellFoundByName != null) throw new UniqueEntityException(String.format(
+            "A Spell already exists with the name: '%s'",
+            requestSpell.getName()
+        ));
         requestSpell = spellsService.saveSpell(requestSpell);
 
         URI spellLocation = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(requestSpell.getId())
-                .toUri();
+            .fromCurrentRequest()
+            .path("/{id}")
+            .buildAndExpand(requestSpell.getId())
+            .toUri();
 
         return ResponseEntity.created(spellLocation).body(requestSpell);
     }
@@ -74,16 +74,20 @@ public class SpellRestController {
             Spell requestSpell = extractSpell(data);
             Spell spellFoundById = spellsService.getSpell(UUID.fromString(id));
 
-            if (!requestSpell.getId().equals(spellFoundById.getId())) {
-                throw new EntityMismatchException(String.format("Cannot update Spell with ID: '%s' with data from Spell with ID: '%s'", requestSpell.getId(), id));
-            }
+            if (!requestSpell.getId().equals(spellFoundById.getId())) throw new EntityMismatchException(String.format(
+                "Cannot update Spell with ID: '%s' with data from Spell with ID: '%s'",
+                requestSpell.getId(),
+                id
+            ));
             mergeSpells(spellFoundById, requestSpell);
             spellFoundById = spellsService.saveSpell(spellFoundById);
 
             return ResponseEntity.ok(spellFoundById);
         } catch (EntityNotFoundException exception) {
-
-            throw new EntityNotFoundException(String.format("Cannot update Spell with ID: '%s' because it does not exist.", id));
+            throw new EntityNotFoundException(String.format(
+                "Cannot update Spell with ID: '%s' because it does not exist.",
+                id
+            ));
         }
     }
 

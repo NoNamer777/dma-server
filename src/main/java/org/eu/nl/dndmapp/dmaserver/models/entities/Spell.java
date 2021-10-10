@@ -11,9 +11,9 @@ import javax.persistence.*;
 @Entity
 @Table(name = "`spell`")
 @NamedQueries({
-        @NamedQuery(name = "find_all_spells", query = "SELECT S FROM Spell S order by S.name"),
-        @NamedQuery(name = "find_spell_by_id", query = "SELECT S FROM Spell S WHERE S.id = ?1"),
-        @NamedQuery(name = "find_spell_by_name", query = "SELECT S FROM Spell S WHERE S.name = ?1"),
+    @NamedQuery(name = "find_all_spells", query = "SELECT S FROM Spell S order by S.name"),
+    @NamedQuery(name = "find_spell_by_id", query = "SELECT S FROM Spell S WHERE S.id = ?1"),
+    @NamedQuery(name = "find_spell_by_name", query = "SELECT S FROM Spell S WHERE S.name = ?1"),
 })
 @Getter
 @Setter
