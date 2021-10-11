@@ -174,6 +174,22 @@ public class SpellRestController {
         String duration = RequestBodyExtractor.getText(spellData, "duration");
         spell.setDuration(duration);
 
+        ArrayNode spellComponentsData = RequestBodyExtractor.getList(spellData, "components");
+        addSpellComponents(spell, spellComponentsData);
+
         return spell;
+    }
+
+    private void addSpellComponents(Spell spell, ArrayNode data) {
+        if (data == null) return;
+
+        for (JsonNode node: data) {
+            String componentData = node.isTextual() ? node.asText() : null;
+            SpellComponent component = SpellComponent.parse(componentData);
+
+            if (component == null) continue;
+
+            spell.addComponent(component);
+        }
     }
 }

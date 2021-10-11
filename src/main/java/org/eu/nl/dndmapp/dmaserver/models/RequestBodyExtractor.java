@@ -1,5 +1,6 @@
 package org.eu.nl.dndmapp.dmaserver.models;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class RequestBodyExtractor {
@@ -20,5 +21,11 @@ public class RequestBodyExtractor {
         if (data.get(fieldName) == null || !data.get(fieldName).isBoolean()) return null;
 
         return data.get(fieldName).asBoolean();
+    }
+
+    public static ArrayNode getList(ObjectNode data, String fieldName) {
+        if (data.get(fieldName) == null || !data.get(fieldName).isArray()) return null;
+
+        return data.withArray(fieldName);
     }
 }

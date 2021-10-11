@@ -5,11 +5,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.eu.nl.dndmapp.dmaserver.models.converters.MagicSchoolConverter;
+import org.eu.nl.dndmapp.dmaserver.models.converters.SpellComponentConverter;
 import org.eu.nl.dndmapp.dmaserver.models.enums.MagicSchool;
+import org.eu.nl.dndmapp.dmaserver.models.enums.SpellComponent;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -51,11 +55,27 @@ public class Spell {
     @Column(name = "`duration`")
     private String duration;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Convert(converter = SpellComponentConverter.class)
+    @Column(name = "`component`")
+    @JoinTable(
+        name = "`spell_component`",
+        joinColumns = @JoinColumn(name = "`spell_id`")
+    )
+    private final Set<SpellComponent> components = new HashSet<>();
 
     public Spell(String id) {
         if (id == null) return;
 
         this.id = UUID.fromString(id);
+    }
+
+    public void addComponent(SpellComponent component) {
+        components.add(component);
+    }
+
+    public void removeComponent(SpellComponent component) {
+        components.remove(component);
     }
 
     @Override
