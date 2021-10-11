@@ -48,3 +48,10 @@ CREATE TABLE IF NOT EXISTS `spell` (
 );
 
 CREATE UNIQUE INDEX `spell_idx` ON `spell` (`id`, `name`);
+
+CREATE TABLE `spell_component` (
+    `spell_id` BINARY(16) NOT NULL,
+    `component` VARCHAR(16) NOT NULL,
+    PRIMARY KEY (`spell_id`, `component`),
+    CONSTRAINT `spell_component_fk` FOREIGN KEY (`spell_id`) REFERENCES `spell`(`id`)
+)
