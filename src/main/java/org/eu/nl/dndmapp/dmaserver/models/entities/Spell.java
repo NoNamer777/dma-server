@@ -4,23 +4,30 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.eu.nl.dndmapp.dmaserver.models.NamedEntity;
 import org.eu.nl.dndmapp.dmaserver.models.converters.MagicSchoolConverter;
 import org.eu.nl.dndmapp.dmaserver.models.enums.MagicSchool;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Objects;
+import java.util.UUID;
 
-@Entity
-@Table(name = "`spell`")
-@NamedQueries({
-    @NamedQuery(name = "find_all_spells", query = "SELECT S FROM Spell S order by S.name"),
-    @NamedQuery(name = "find_spell_by_id", query = "SELECT S FROM Spell S WHERE S.id = ?1"),
-    @NamedQuery(name = "find_spell_by_name", query = "SELECT S FROM Spell S WHERE S.name = ?1"),
-})
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Spell extends NamedEntity {
+@Entity
+@Table(name = "`spell`")
+public class Spell {
+
+    @Id
+    @Setter(AccessLevel.NONE)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(name = "`id`")
+    private UUID id;
+
+    @Column(name = "`name`")
+    private String name;
 
     @Column(name = "`level`")
     private Integer level = 0;
@@ -44,7 +51,25 @@ public class Spell extends NamedEntity {
     @Column(name = "`duration`")
     private String duration;
 
+
     public Spell(String id) {
-        super(id);
+        if (id == null) return;
+
+        this.id = UUID.fromString(id);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Spell spell = (Spell) o;
+
+        return id.equals(spell.id) && name.equals(spell.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
     }
 }
