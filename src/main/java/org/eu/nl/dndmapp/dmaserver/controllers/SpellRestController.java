@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -140,8 +142,26 @@ public class SpellRestController {
         if (newData.getRange() != null && !original.getRange().equals(newData.getRange())) {
             original.setRange(newData.getRange());
         }
+        if (newData.getConcentration() != null && !original.getConcentration().equals(newData.getConcentration())) {
+            original.setConcentration(newData.getConcentration());
+        }
         if (newData.getDuration() != null && !original.getDuration().equals(newData.getDuration())) {
             original.setDuration(newData.getDuration());
+        }
+        if (newData.getComponents() != null) {
+            List<SpellComponent> originalComponents = new ArrayList<>(original.getComponents());
+            List<SpellComponent> newComponents = new ArrayList<>(newData.getComponents());
+
+            for (SpellComponent component: originalComponents) {
+                if (!newComponents.contains(component)) {
+                    original.removeComponent(component);
+                }
+            }
+            for (SpellComponent component: newComponents) {
+                if (!originalComponents.contains(component)) {
+                    original.addComponent(component);
+                }
+            }
         }
     }
 
