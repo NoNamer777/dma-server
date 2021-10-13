@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.eu.nl.dndmapp.dmaserver.models.RequestBodyExtractor;
 import org.eu.nl.dndmapp.dmaserver.models.entities.MaterialComponent;
 import org.eu.nl.dndmapp.dmaserver.models.entities.Spell;
+import org.eu.nl.dndmapp.dmaserver.models.entities.SpellDescription;
 import org.eu.nl.dndmapp.dmaserver.models.enums.MagicSchool;
 import org.eu.nl.dndmapp.dmaserver.models.enums.SpellComponent;
 import org.eu.nl.dndmapp.dmaserver.models.exceptions.EntityMismatchException;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.UUID;
 
 @RestController
@@ -77,7 +79,6 @@ public class SpellRestController {
                 requestSpell.getName()
             ));
         } catch (IllegalArgumentException illegalArgumentException) {
-            System.out.println(illegalArgumentException.getMessage());
             if (illegalArgumentException.getMessage() != null && illegalArgumentException.getMessage().contains("Invalid UUID string")) {
                 throw new UniqueEntityException(String.format(
                     "Cannot save Spell with ID: '%s' because IDs are generated.",
@@ -157,6 +158,9 @@ public class SpellRestController {
         ArrayNode materialComponentsData = RequestBodyExtractor.getList(spellData, "materials");
         addMaterialComponents(spell, materialComponentsData);
 
+        ArrayNode descriptionsData = RequestBodyExtractor.getList(spellData, "descriptions");
+        addDescriptions(spell, descriptionsData);
+
         return spell;
     }
 
@@ -193,6 +197,29 @@ public class SpellRestController {
             materialComponent.setConsumedBySpell(consumedBySpell);
 
             spell.addMaterial(materialComponent);
+        }
+    }
+
+    private void addDescriptions(Spell spell, ArrayNode data) {
+        if (data == null) return;
+
+        for (JsonNode entry: data) {
+            if (!entry.isObject()) continue;
+            ObjectNode descriptionData = (ObjectNode) entry;
+
+            String id = RequestBodyExtractor.getText(descriptionData, "id");
+            SpellDescription description = new SpellDescription(id);
+
+            String title = RequestBodyExtractor.getText(descriptionData, "title");
+            description.setTitle(title);
+
+            String text = RequestBodyExtractor.getText(descriptionData, "text");
+            description.setText(text);
+
+            Integer order = RequestBodyExtractor.getInteger(descriptionData, "order");
+            description.setOrder(order);
+
+            spell.addDescription(description);
         }
     }
 }
