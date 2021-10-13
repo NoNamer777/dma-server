@@ -54,4 +54,15 @@ CREATE TABLE `spell_component` (
     `component` VARCHAR(16) NOT NULL,
     PRIMARY KEY (`spell_id`, `component`),
     CONSTRAINT `spell_component_fk` FOREIGN KEY (`spell_id`) REFERENCES `spell`(`id`)
+);
+
+CREATE TABLE `material_component` (
+    `id` BINARY(16) NOT NULL,
+    `name` VARCHAR(64) NOT NULL,
+    `cost` DOUBLE(6, 2) NOT NULL,
+    `consumed` TINYINT(2) NOT NULL DEFAULT 0,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `unique_material_id` UNIQUE (`id`),
+    CONSTRAINT `unique_material_name` UNIQUE (`name`)
+);
 )
