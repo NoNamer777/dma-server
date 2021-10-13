@@ -73,4 +73,13 @@ CREATE TABLE `spell_material_component` (
     CONSTRAINT `unique_spell_material_component` UNIQUE (`spell_id`, `material_id`),
     CONSTRAINT `spell_material_fk` FOREIGN KEY (`spell_id`) REFERENCES `spell`(`id`),
     CONSTRAINT `material_spell_fk` FOREIGN KEY (`material_id`) REFERENCES `material_component`(`id`)
-)
+);
+
+CREATE TABLE `spell_description` (
+    `id` BINARY(16) NOT NULL,
+    `title` VARCHAR(24) DEFAULT NULL,
+    `order` TINYINT(3) NOT NULL DEFAULT 0,
+    `text` MEDIUMTEXT NOT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `unique_spell_description_id` UNIQUE (`id`),
+);
