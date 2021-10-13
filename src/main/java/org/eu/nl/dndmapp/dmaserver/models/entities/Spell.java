@@ -1,5 +1,6 @@
 package org.eu.nl.dndmapp.dmaserver.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,9 @@ import org.eu.nl.dndmapp.dmaserver.models.enums.MagicSchool;
 import org.eu.nl.dndmapp.dmaserver.models.enums.SpellComponent;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -52,6 +55,14 @@ public class Spell extends NamedEntity {
     )
     private final Set<SpellComponent> components = new HashSet<>();
 
+    @JsonManagedReference
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "`spell_material_component`",
+        joinColumns = @JoinColumn(name = "`spell_id`"),
+        inverseJoinColumns = @JoinColumn(name = "`material_id`")
+    )
+    private final Set<MaterialComponent> materials = new HashSet<>();
 
     public Spell(String id) {
         super(id);
@@ -63,11 +74,27 @@ public class Spell extends NamedEntity {
 
     public void removeComponent(SpellComponent component) {
         components.remove(component);
+
+        if (component == SpellComponent.MATERIAL) {
+            removeAllMaterials();
+        }
     }
 
+    public void addMaterial(MaterialComponent material) {
+        materials.add(material);
 
-
+        material.addSpell(this);
     }
 
+    public void removeMaterial(MaterialComponent material) {
+        materials.remove(material);
+
+        material.removeSpell(this);
+    }
+
+    public void removeAllMaterials() {
+        List<MaterialComponent> materialComponents = new ArrayList<>(materials);
+
+        materialComponents.forEach(this::removeMaterial);
     }
 }

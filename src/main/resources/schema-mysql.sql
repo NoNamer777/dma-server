@@ -65,4 +65,12 @@ CREATE TABLE `material_component` (
     CONSTRAINT `unique_material_id` UNIQUE (`id`),
     CONSTRAINT `unique_material_name` UNIQUE (`name`)
 );
+
+CREATE TABLE `spell_material_component` (
+    `spell_id` BINARY(16) NOT NULL,
+    `material_id` BINARY(16) NOT NULL,
+    PRIMARY KEY (`spell_id`, `material_id`),
+    CONSTRAINT `unique_spell_material_component` UNIQUE (`spell_id`, `material_id`),
+    CONSTRAINT `spell_material_fk` FOREIGN KEY (`spell_id`) REFERENCES `spell`(`id`),
+    CONSTRAINT `material_spell_fk` FOREIGN KEY (`material_id`) REFERENCES `material_component`(`id`)
 )

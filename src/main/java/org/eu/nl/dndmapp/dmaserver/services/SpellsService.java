@@ -1,8 +1,10 @@
 package org.eu.nl.dndmapp.dmaserver.services;
 
+import org.eu.nl.dndmapp.dmaserver.models.entities.MaterialComponent;
 import org.eu.nl.dndmapp.dmaserver.models.entities.Spell;
 import org.eu.nl.dndmapp.dmaserver.models.enums.SpellComponent;
 import org.eu.nl.dndmapp.dmaserver.models.exceptions.EntityNotFoundException;
+import org.eu.nl.dndmapp.dmaserver.repositories.MaterialComponentRepository;
 import org.eu.nl.dndmapp.dmaserver.repositories.SpellRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,9 +21,12 @@ public class SpellsService {
 
     private final SpellRepository spellsRepo;
 
+    private final MaterialComponentRepository materialComponentsRepo;
+
     @Autowired
-    public SpellsService(SpellRepository spellsRepo) {
+    public SpellsService(SpellRepository spellsRepo, MaterialComponentRepository materialComponentsRepo) {
         this.spellsRepo = spellsRepo;
+        this.materialComponentsRepo = materialComponentsRepo;
     }
 
     public Page<Spell> getSpells(int page) {
@@ -46,7 +51,13 @@ public class SpellsService {
 
     public void deleteSpell(UUID id) {
         try {
-            getSpell(id);
+            Spell spell = getSpell(id);
+            List<MaterialComponent> materials = new ArrayList<>(spell.getMaterials());
+
+            for (MaterialComponent material: materials) {
+                spell.removeMaterial(material);
+                materialComponentsRepo.save(material);
+            }
             spellsRepo.deleteById(id);
 
         } catch (EntityNotFoundException exception) {
@@ -55,6 +66,28 @@ public class SpellsService {
     }
 
     public Spell saveSpell(Spell spell) {
+        List<MaterialComponent> materials = new ArrayList<>(spell.getMaterials());
+
+        materials
+            .stream()
+            .filter(material -> material.getId() == null)
+            .forEach(material -> {
+                try {
+                    MaterialComponent materialFoundByName = materialComponentsRepo
+                        .findByName(material.getName())
+                        .orElseThrow(() -> new EntityNotFoundException(
+                            String.format("No Spell Material was found by name '%s'", material.getName())
+                    ));
+
+                    spell.removeMaterial(material);
+                    spell.addMaterial(materialFoundByName);
+
+                } catch (EntityNotFoundException exception) {
+
+                    materialComponentsRepo.save(material);
+                }
+            });
+
         return spellsRepo.save(spell);
     }
 
@@ -96,6 +129,24 @@ public class SpellsService {
                     .stream()
                     .filter(component -> !originalComponents.contains(component))
                     .forEach(original::addComponent);
+        }
+        if (newData.getMaterials() != null) {
+            List<MaterialComponent> originalMaterials = new ArrayList<>(original.getMaterials());
+            List<MaterialComponent> newMaterials = new ArrayList<>(newData.getMaterials());
+
+            originalMaterials
+                .stream()
+                .filter(material -> !newMaterials.contains(material))
+                .forEach(material -> {
+                    original.removeMaterial(material);
+
+                    materialComponentsRepo.save(material);
+                });
+
+            newMaterials
+                .stream()
+                .filter(material -> !originalMaterials.contains(material))
+                .forEach(original::addMaterial);
         }
     }
 }
