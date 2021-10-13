@@ -64,6 +64,10 @@ public class Spell extends NamedEntity {
     )
     private final Set<MaterialComponent> materials = new HashSet<>();
 
+    @JsonManagedReference
+    @OneToMany(mappedBy = "spell", fetch = FetchType.EAGER, orphanRemoval = true)
+    private final Set<SpellDescription> descriptions = new HashSet<>();
+
     public Spell(String id) {
         super(id);
     }
@@ -96,5 +100,27 @@ public class Spell extends NamedEntity {
         List<MaterialComponent> materialComponents = new ArrayList<>(materials);
 
         materialComponents.forEach(this::removeMaterial);
+    }
+
+    public void addDescription(SpellDescription description) {
+        descriptions.add(description);
+
+        description.setSpell(this);
+    }
+
+    public void addAllDescriptions(List<SpellDescription> descriptions) {
+        descriptions.forEach(this::addDescription);
+    }
+
+    public void removeDescription(SpellDescription description) {
+        descriptions.remove(description);
+
+        description.setSpell(null);
+    }
+
+    public void removeAllDescriptions() {
+        List<SpellDescription> spellDescriptions = new ArrayList<>(descriptions);
+
+        spellDescriptions.forEach(this::removeDescription);
     }
 }

@@ -2,9 +2,11 @@ package org.eu.nl.dndmapp.dmaserver.services;
 
 import org.eu.nl.dndmapp.dmaserver.models.entities.MaterialComponent;
 import org.eu.nl.dndmapp.dmaserver.models.entities.Spell;
+import org.eu.nl.dndmapp.dmaserver.models.entities.SpellDescription;
 import org.eu.nl.dndmapp.dmaserver.models.enums.SpellComponent;
 import org.eu.nl.dndmapp.dmaserver.models.exceptions.EntityNotFoundException;
 import org.eu.nl.dndmapp.dmaserver.repositories.MaterialComponentRepository;
+import org.eu.nl.dndmapp.dmaserver.repositories.SpellDescriptionRepository;
 import org.eu.nl.dndmapp.dmaserver.repositories.SpellRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,10 +25,17 @@ public class SpellsService {
 
     private final MaterialComponentRepository materialComponentsRepo;
 
+    private final SpellDescriptionRepository spellDescriptionsRepo;
+
     @Autowired
-    public SpellsService(SpellRepository spellsRepo, MaterialComponentRepository materialComponentsRepo) {
+    public SpellsService(
+        SpellRepository spellsRepo,
+        MaterialComponentRepository materialComponentsRepo,
+        SpellDescriptionRepository spellDescriptionRepository
+    ) {
         this.spellsRepo = spellsRepo;
         this.materialComponentsRepo = materialComponentsRepo;
+        this.spellDescriptionsRepo = spellDescriptionRepository;
     }
 
     public Page<Spell> getSpells(int page) {
@@ -67,26 +76,17 @@ public class SpellsService {
 
     public Spell saveSpell(Spell spell) {
         List<MaterialComponent> materials = new ArrayList<>(spell.getMaterials());
+        List<SpellDescription> descriptions = new ArrayList<>(spell.getDescriptions());
 
-        materials
-            .stream()
-            .filter(material -> material.getId() == null)
-            .forEach(material -> {
-                try {
-                    MaterialComponent materialFoundByName = materialComponentsRepo
-                        .findByName(material.getName())
-                        .orElseThrow(() -> new EntityNotFoundException(
-                            String.format("No Spell Material was found by name '%s'", material.getName())
-                    ));
+        optionallyProvideMaterialsOfId(spell, materials);
 
-                    spell.removeMaterial(material);
-                    spell.addMaterial(materialFoundByName);
+        if (spell.getId() == null) {
+            spell.removeAllDescriptions();
 
-                } catch (EntityNotFoundException exception) {
-
-                    materialComponentsRepo.save(material);
-                }
-            });
+            spell = spellsRepo.save(spell);
+            spell.addAllDescriptions(descriptions);
+        }
+        optionallyProvideDescriptionsOfId(spell, descriptions);
 
         return spellsRepo.save(spell);
     }
@@ -121,14 +121,14 @@ public class SpellsService {
             List<SpellComponent> newComponents = new ArrayList<>(newData.getComponents());
 
             originalComponents
-                    .stream()
-                    .filter(component -> !newComponents.contains(component))
-                    .forEach(original::removeComponent);
+                .stream()
+                .filter(component -> !newComponents.contains(component))
+                .forEach(original::removeComponent);
 
             newComponents
-                    .stream()
-                    .filter(component -> !originalComponents.contains(component))
-                    .forEach(original::addComponent);
+                .stream()
+                .filter(component -> !originalComponents.contains(component))
+                .forEach(original::addComponent);
         }
         if (newData.getMaterials() != null) {
             List<MaterialComponent> originalMaterials = new ArrayList<>(original.getMaterials());
@@ -148,5 +148,77 @@ public class SpellsService {
                 .filter(material -> !originalMaterials.contains(material))
                 .forEach(original::addMaterial);
         }
+        if (newData.getDescriptions() != null) {
+            List<SpellDescription> originalDescriptions = new ArrayList<>(original.getDescriptions());
+            List<SpellDescription> newDescriptions = new ArrayList<>(newData.getDescriptions());
+
+            originalDescriptions
+                .stream()
+                .filter(description -> !newDescriptions.contains(description))
+                .forEach(spellDescription -> {
+                    original.removeDescription(spellDescription);
+
+                    spellDescriptionsRepo.delete(spellDescription);
+                });
+
+            newDescriptions
+                .stream()
+                .filter(description -> !originalDescriptions.contains(description))
+                .forEach(original::addDescription);
+        }
+    }
+
+    private void optionallyProvideMaterialsOfId(Spell spell, List<MaterialComponent> materials) {
+        materials
+            .stream()
+            .filter(material -> material.getId() == null)
+            .forEach(material -> {
+                try {
+                    MaterialComponent materialFoundByName = materialComponentsRepo
+                        .findByName(material.getName())
+                        .orElseThrow(() -> new EntityNotFoundException(
+                            String.format("No Spell Material was found by name '%s'", material.getName())
+                    ));
+
+                    spell.removeMaterial(material);
+                    spell.addMaterial(materialFoundByName);
+
+                } catch (EntityNotFoundException exception) {
+
+                    materialComponentsRepo.save(material);
+                }
+        });
+    }
+
+    private void optionallyProvideDescriptionsOfId(Spell spell, List<SpellDescription> descriptions) {
+        descriptions
+            .stream()
+            .filter(description -> description.getId() == null)
+            .forEach(description -> {
+                try {
+                    List<SpellDescription> descriptionsFoundBySpell = spellDescriptionsRepo
+                        .findBySpellIdOrderByOrderAsc(description.getSpell().getId());
+
+                    SpellDescription matchingDescription = descriptionsFoundBySpell
+                        .stream()
+                        .filter(spellDescription -> spellDescription.equals(description))
+                        .findFirst()
+                        .orElse(null);
+
+                    if (descriptionsFoundBySpell.isEmpty() || matchingDescription == null) {
+                        throw new EntityNotFoundException(String.format(
+                            "Spell with ID: '%s' does not have the following description: %s",
+                            description.getSpell().getId(),
+                            description
+                        ));
+                    }
+                    spell.removeDescription(description);
+                    spell.addDescription(matchingDescription);
+
+                } catch (EntityNotFoundException exception) {
+
+                    spellDescriptionsRepo.save(description);
+                }
+        });
     }
 }

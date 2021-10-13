@@ -80,6 +80,9 @@ CREATE TABLE `spell_description` (
     `title` VARCHAR(24) DEFAULT NULL,
     `order` TINYINT(3) NOT NULL DEFAULT 0,
     `text` MEDIUMTEXT NOT NULL,
+    `spell_id` BINARY(16) NOT NULL,
     PRIMARY KEY (`id`),
     CONSTRAINT `unique_spell_description_id` UNIQUE (`id`),
+    CONSTRAINT `unique_spell_description` UNIQUE (`spell_id`, `order`),
+    CONSTRAINT `spell_description_fk` FOREIGN KEY (`spell_id`) REFERENCES `spell`(`id`)
 );
