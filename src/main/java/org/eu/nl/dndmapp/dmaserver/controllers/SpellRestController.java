@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.eu.nl.dndmapp.dmaserver.models.RequestBodyExtractor;
+import org.eu.nl.dndmapp.dmaserver.models.entities.MaterialComponent;
 import org.eu.nl.dndmapp.dmaserver.models.entities.Spell;
 import org.eu.nl.dndmapp.dmaserver.models.enums.MagicSchool;
 import org.eu.nl.dndmapp.dmaserver.models.enums.SpellComponent;
@@ -153,6 +154,9 @@ public class SpellRestController {
         ArrayNode spellComponentsData = RequestBodyExtractor.getList(spellData, "components");
         addSpellComponents(spell, spellComponentsData);
 
+        ArrayNode materialComponentsData = RequestBodyExtractor.getList(spellData, "materials");
+        addMaterialComponents(spell, materialComponentsData);
+
         return spell;
     }
 
@@ -166,6 +170,29 @@ public class SpellRestController {
             if (component == null) continue;
 
             spell.addComponent(component);
+        }
+    }
+
+    private void addMaterialComponents(Spell spell, ArrayNode data) {
+        if (data == null) return;
+
+        for (JsonNode entry: data) {
+            if (!entry.isObject()) continue;
+            ObjectNode materialComponentData = (ObjectNode) entry;
+
+            String id = RequestBodyExtractor.getText(materialComponentData, "id");
+            MaterialComponent materialComponent = new MaterialComponent(id);
+
+            String name = RequestBodyExtractor.getText(materialComponentData, "name");
+            materialComponent.setName(name);
+
+            Double cost = RequestBodyExtractor.getDouble(materialComponentData, "cost");
+            materialComponent.setCost(cost);
+
+            Boolean consumedBySpell = RequestBodyExtractor.getBoolean(materialComponentData, "consumedBySpell");
+            materialComponent.setConsumedBySpell(consumedBySpell);
+
+            spell.addMaterial(materialComponent);
         }
     }
 }

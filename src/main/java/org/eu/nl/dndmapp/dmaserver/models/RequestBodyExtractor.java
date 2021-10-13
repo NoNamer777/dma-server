@@ -17,6 +17,12 @@ public class RequestBodyExtractor {
         return data.get(fieldName).asInt();
     }
 
+    public static Double getDouble(ObjectNode data, String fieldName) {
+        if (data.get(fieldName) == null || !data.get(fieldName).isDouble()) return null;
+
+        return data.get(fieldName).asDouble();
+    }
+
     public static Boolean getBoolean(ObjectNode data, String fieldName) {
         if (data.get(fieldName) == null || !data.get(fieldName).isBoolean()) return null;
 
