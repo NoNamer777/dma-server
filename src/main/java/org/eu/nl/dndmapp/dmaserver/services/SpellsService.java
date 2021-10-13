@@ -1,6 +1,7 @@
 package org.eu.nl.dndmapp.dmaserver.services;
 
 import org.eu.nl.dndmapp.dmaserver.models.entities.Spell;
+import org.eu.nl.dndmapp.dmaserver.models.enums.SpellComponent;
 import org.eu.nl.dndmapp.dmaserver.models.exceptions.EntityNotFoundException;
 import org.eu.nl.dndmapp.dmaserver.repositories.SpellRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -53,5 +56,46 @@ public class SpellsService {
 
     public Spell saveSpell(Spell spell) {
         return spellsRepo.save(spell);
+    }
+
+    public void mergeSpells(Spell original, Spell newData) {
+        if (newData.getName() != null && !original.getName().equals(newData.getName())) {
+            original.setName(newData.getName());
+        }
+        if (newData.getLevel() != null && !original.getLevel().equals(newData.getLevel())) {
+            original.setLevel(newData.getLevel());
+        }
+        if (newData.getMagicSchool() != null && !original.getMagicSchool().equals(newData.getMagicSchool())) {
+            original.setMagicSchool(newData.getMagicSchool());
+        }
+        if (newData.getRitual() != null && !original.getRitual().equals(newData.getRitual())) {
+            original.setRitual(newData.getRitual());
+        }
+        if (newData.getCastingTime() != null && !original.getCastingTime().equals(newData.getCastingTime())) {
+            original.setCastingTime(newData.getCastingTime());
+        }
+        if (newData.getRange() != null && !original.getRange().equals(newData.getRange())) {
+            original.setRange(newData.getRange());
+        }
+        if (newData.getConcentration() != null && !original.getConcentration().equals(newData.getConcentration())) {
+            original.setConcentration(newData.getConcentration());
+        }
+        if (newData.getDuration() != null && !original.getDuration().equals(newData.getDuration())) {
+            original.setDuration(newData.getDuration());
+        }
+        if (newData.getComponents() != null) {
+            List<SpellComponent> originalComponents = new ArrayList<>(original.getComponents());
+            List<SpellComponent> newComponents = new ArrayList<>(newData.getComponents());
+
+            originalComponents
+                    .stream()
+                    .filter(component -> !newComponents.contains(component))
+                    .forEach(original::removeComponent);
+
+            newComponents
+                    .stream()
+                    .filter(component -> !originalComponents.contains(component))
+                    .forEach(original::addComponent);
+        }
     }
 }

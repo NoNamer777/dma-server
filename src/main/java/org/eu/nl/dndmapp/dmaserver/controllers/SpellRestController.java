@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -111,7 +109,7 @@ public class SpellRestController {
                 requestSpell.getId(),
                 id
             ));
-            mergeSpells(spellFoundById, requestSpell);
+            spellsService.mergeSpells(spellFoundById, requestSpell);
             spellFoundById = spellsService.saveSpell(spellFoundById);
 
             return ResponseEntity.ok(spellFoundById);
@@ -120,48 +118,6 @@ public class SpellRestController {
                 "Cannot update Spell with ID: '%s' because it does not exist.",
                 id
             ));
-        }
-    }
-
-    private void mergeSpells(Spell original, Spell newData) {
-        if (newData.getName() != null && !original.getName().equals(newData.getName())) {
-            original.setName(newData.getName());
-        }
-        if (newData.getLevel() != null && !original.getLevel().equals(newData.getLevel())) {
-            original.setLevel(newData.getLevel());
-        }
-        if (newData.getMagicSchool() != null && !original.getMagicSchool().equals(newData.getMagicSchool())) {
-            original.setMagicSchool(newData.getMagicSchool());
-        }
-        if (newData.getRitual() != null && !original.getRitual().equals(newData.getRitual())) {
-            original.setRitual(newData.getRitual());
-        }
-        if (newData.getCastingTime() != null && !original.getCastingTime().equals(newData.getCastingTime())) {
-            original.setCastingTime(newData.getCastingTime());
-        }
-        if (newData.getRange() != null && !original.getRange().equals(newData.getRange())) {
-            original.setRange(newData.getRange());
-        }
-        if (newData.getConcentration() != null && !original.getConcentration().equals(newData.getConcentration())) {
-            original.setConcentration(newData.getConcentration());
-        }
-        if (newData.getDuration() != null && !original.getDuration().equals(newData.getDuration())) {
-            original.setDuration(newData.getDuration());
-        }
-        if (newData.getComponents() != null) {
-            List<SpellComponent> originalComponents = new ArrayList<>(original.getComponents());
-            List<SpellComponent> newComponents = new ArrayList<>(newData.getComponents());
-
-            for (SpellComponent component: originalComponents) {
-                if (!newComponents.contains(component)) {
-                    original.removeComponent(component);
-                }
-            }
-            for (SpellComponent component: newComponents) {
-                if (!originalComponents.contains(component)) {
-                    original.addComponent(component);
-                }
-            }
         }
     }
 
