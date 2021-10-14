@@ -141,7 +141,7 @@ public class SpellsService {
                     original.removeMaterial(material);
 
                     materialComponentsRepo.save(material);
-                });
+            });
 
             newMaterials
                 .stream()
@@ -159,7 +159,7 @@ public class SpellsService {
                     original.removeDescription(spellDescription);
 
                     spellDescriptionsRepo.delete(spellDescription);
-                });
+            });
 
             newDescriptions
                 .stream()
