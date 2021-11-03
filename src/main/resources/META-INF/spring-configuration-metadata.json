@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "dma.allowed-origins",
+      "type": "java.lang.String",
+      "description": "Comma seperated values of origins that are allowed to connect to the server."
+    }
+  ]
+}

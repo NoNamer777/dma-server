@@ -24,14 +24,14 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-mail:2.5.5'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:2.5.5'
     implementation 'org.springframework.boot:spring-boot-starter-web:2.5.5'
+    implementation 'org.springframework.boot:spring-boot-configuration-processor:2.5.5'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools:2.5.5'
 
-    compileOnly 'org.projectlombok:lombok:1.18.20'
+    compileOnly 'org.projectlombok:lombok:1.18.22'
 
     runtimeOnly 'mysql:mysql-connector-java:8.0.25'
 
-    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor:2.5.5'
     annotationProcessor 'org.projectlombok:lombok:1.18.20'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test:2.5.5'

@@ -1,9 +1,11 @@
+dma:
+  allowed-origins: '*'
 logging:
   level:
     web: 'info'
 server:
-  address: '000.000.000.000'
-  port: 0000
+  address: '0.0.0.0'
+  port: 8080
 spring:
   datasource:
     driver-class-name: 'com.mysql.cj.jdbc.Driver'
