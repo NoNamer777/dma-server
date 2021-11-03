@@ -23,7 +23,7 @@ DEALLOCATE PREPARE statement;
 SET FOREIGN_KEY_CHECKS = 1;
 
 CREATE TABLE IF NOT EXISTS `spell` (
-    `id` BINARY(16) NOT NULL,
+    `id` VARCHAR(64) NOT NULL,
     `name` VARCHAR(64) NOT NULL,
     `level` TINYINT(2) NOT NULL DEFAULT 0,
     `magic_school` ENUM (
@@ -50,14 +50,14 @@ CREATE TABLE IF NOT EXISTS `spell` (
 CREATE UNIQUE INDEX `spell_idx` ON `spell` (`id`, `name`);
 
 CREATE TABLE `spell_component` (
-    `spell_id` BINARY(16) NOT NULL,
+    `spell_id` VARCHAR(64) NOT NULL,
     `component` VARCHAR(16) NOT NULL,
     PRIMARY KEY (`spell_id`, `component`),
     CONSTRAINT `spell_component_fk` FOREIGN KEY (`spell_id`) REFERENCES `spell`(`id`)
 );
 
 CREATE TABLE `material_component` (
-    `id` BINARY(16) NOT NULL,
+    `id` VARCHAR(64) NOT NULL,
     `name` VARCHAR(64) NOT NULL,
     `cost` DOUBLE(6, 2) NOT NULL,
     `consumed` TINYINT(2) NOT NULL DEFAULT 0,
@@ -67,8 +67,8 @@ CREATE TABLE `material_component` (
 );
 
 CREATE TABLE `spell_material_component` (
-    `spell_id` BINARY(16) NOT NULL,
-    `material_id` BINARY(16) NOT NULL,
+    `spell_id` VARCHAR(64) NOT NULL,
+    `material_id` VARCHAR(64) NOT NULL,
     PRIMARY KEY (`spell_id`, `material_id`),
     CONSTRAINT `unique_spell_material_component` UNIQUE (`spell_id`, `material_id`),
     CONSTRAINT `spell_material_fk` FOREIGN KEY (`spell_id`) REFERENCES `spell`(`id`),
@@ -76,11 +76,11 @@ CREATE TABLE `spell_material_component` (
 );
 
 CREATE TABLE `spell_description` (
-    `id` BINARY(16) NOT NULL,
+    `id` VARCHAR(64) NOT NULL,
     `title` VARCHAR(24) DEFAULT NULL,
     `order` TINYINT(3) NOT NULL DEFAULT 0,
     `text` MEDIUMTEXT NOT NULL,
-    `spell_id` BINARY(16) NOT NULL,
+    `spell_id` VARCHAR(64) NOT NULL,
     PRIMARY KEY (`id`),
     CONSTRAINT `unique_spell_description_id` UNIQUE (`id`),
     CONSTRAINT `unique_spell_description` UNIQUE (`spell_id`, `order`),
