@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.Arrays;
 import java.util.UUID;
 
 @RestController
@@ -37,10 +36,10 @@ public class SpellRestController {
     @GetMapping
     public Page<Spell> getSpells(
         @RequestParam(value = "page", required = false, defaultValue = "0") int page,
-        @RequestParam(value = "query", required = false) String query
+        @RequestParam(value = "name", required = false) String name
     ) {
-        if (query != null) {
-            return spellsService.querySpellsByNameLike("%" + query + "%", page);
+        if (name != null) {
+            return spellsService.querySpellsByNameLike("%" + name + "%", page);
         }
 
         return spellsService.getSpells(page);
