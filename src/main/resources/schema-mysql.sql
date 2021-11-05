@@ -58,7 +58,7 @@ CREATE TABLE `spell_component` (
 CREATE TABLE `material_component` (
     `id` VARCHAR(64) NOT NULL,
     `name` TEXT(64) NOT NULL,
-    `cost` DOUBLE(6, 2) NOT NULL,
+    `cost` DOUBLE(7, 2) NOT NULL,
     `consumed` TINYINT(2) NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`)
 );
