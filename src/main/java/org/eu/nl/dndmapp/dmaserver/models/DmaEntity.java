@@ -38,7 +38,7 @@ public class DmaEntity {
 
         DmaEntity other = (DmaEntity) object;
 
-        return this.id.equals(other.id);
+        return Objects.equals(this.id, other.id);
     }
 
     @Override
