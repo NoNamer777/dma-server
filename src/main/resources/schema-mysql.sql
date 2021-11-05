@@ -42,7 +42,6 @@ CREATE TABLE IF NOT EXISTS `spell` (
     `concentration` TINYINT(2) NOT NULL DEFAULT 0,
     `duration` VARCHAR(16) NOT NULL,
     PRIMARY KEY (`id`),
-    CONSTRAINT `unique_spell_id` UNIQUE (`id`),
     CONSTRAINT `unique_spell_name` UNIQUE (`name`),
     CHECK (`level` >= 0 AND `level` <= 9)
 );
@@ -58,12 +57,10 @@ CREATE TABLE `spell_component` (
 
 CREATE TABLE `material_component` (
     `id` VARCHAR(64) NOT NULL,
-    `name` VARCHAR(64) NOT NULL,
+    `name` TEXT(64) NOT NULL,
     `cost` DOUBLE(6, 2) NOT NULL,
     `consumed` TINYINT(2) NOT NULL DEFAULT 0,
-    PRIMARY KEY (`id`),
-    CONSTRAINT `unique_material_id` UNIQUE (`id`),
-    CONSTRAINT `unique_material_name` UNIQUE (`name`)
+    PRIMARY KEY (`id`)
 );
 
 CREATE TABLE `spell_material_component` (
@@ -82,7 +79,6 @@ CREATE TABLE `spell_description` (
     `text` MEDIUMTEXT NOT NULL,
     `spell_id` VARCHAR(64) NOT NULL,
     PRIMARY KEY (`id`),
-    CONSTRAINT `unique_spell_description_id` UNIQUE (`id`),
     CONSTRAINT `unique_spell_description` UNIQUE (`spell_id`, `order`),
     CONSTRAINT `spell_description_fk` FOREIGN KEY (`spell_id`) REFERENCES `spell`(`id`)
 );
