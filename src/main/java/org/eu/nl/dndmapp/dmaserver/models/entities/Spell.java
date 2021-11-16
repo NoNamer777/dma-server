@@ -53,7 +53,7 @@ public class Spell extends NamedEntity {
         name = "`spell_component`",
         joinColumns = @JoinColumn(name = "`spell_id`")
     )
-    private final Set<SpellComponent> components = new HashSet<>();
+    private Set<SpellComponent> components;
 
     @JsonManagedReference
     @ManyToMany(fetch = FetchType.EAGER)
@@ -62,17 +62,20 @@ public class Spell extends NamedEntity {
         joinColumns = @JoinColumn(name = "`spell_id`"),
         inverseJoinColumns = @JoinColumn(name = "`material_id`")
     )
-    private final Set<MaterialComponent> materials = new HashSet<>();
+    private Set<MaterialComponent> materials;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "spell", fetch = FetchType.EAGER, orphanRemoval = true)
-    private final Set<SpellDescription> descriptions = new HashSet<>();
+    private Set<SpellDescription> descriptions;
 
     public Spell(String id) {
         super(id);
     }
 
     public void addComponent(SpellComponent component) {
+        if (components == null) {
+            components = new HashSet<>();
+        }
         components.add(component);
     }
 
@@ -85,6 +88,9 @@ public class Spell extends NamedEntity {
     }
 
     public void addMaterial(MaterialComponent material) {
+        if (materials == null) {
+            this.materials = new HashSet<>();
+        }
         materials.add(material);
 
         material.addSpell(this);
@@ -103,6 +109,9 @@ public class Spell extends NamedEntity {
     }
 
     public void addDescription(SpellDescription description) {
+        if (descriptions == null) {
+            descriptions = new HashSet<>();
+        }
         descriptions.add(description);
 
         description.setSpell(this);
