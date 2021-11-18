@@ -1,0 +1,24 @@
+# Set the default behavior, in case people don't have core.autocrlf set.
+* text=auto
+
+*.java text
+*.yaml text
+*.sql text
+*.css text
+*.html text
+*.txt text
+*.sh text
+
+# Denote all files that are truly binary and should not be modified.
+*.png binary
+*.jpg binary
+*.jepg binary
+*.gif binary
+*.mov binary
+*.mp4 binary
+*.mp3 binary
+*.flv binary
+*.fla binary
+*.swf binary
+*.zip binary
+*.7z binary
