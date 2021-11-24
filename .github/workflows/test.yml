@@ -19,7 +19,7 @@ jobs:
               uses: actions/setup-java@v2
               with:
                   java-version: 11
-                  distrubution: 'adopt'
+                  distribution: 'adopt'
             - name: Run tests with Gradle
               run: |
                   ./gradlew test
