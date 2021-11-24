@@ -1,0 +1,19 @@
+dma:
+  allowed-origins: 'https://www.dndmapp.nl.eu.org/'
+logging:
+  level:
+    web: 'warn'
+spring:
+  devtools:
+    add-properties: false
+  datasource:
+    url: 'url'
+    username: 'username'
+    password: 'password'
+  jpa:
+    hibernate:
+      ddl-auto: 'none'
+    open-in-view: false
+  sql:
+    init:
+      mode: 'never'

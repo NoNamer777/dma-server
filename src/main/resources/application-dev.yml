@@ -2,23 +2,24 @@ dma:
   allowed-origins: '*'
 logging:
   level:
-    web: 'info'
+    web: 'debug'
 server:
   address: '0.0.0.0'
-  port: 8080
 spring:
-  datasource:
-    driver-class-name: 'com.mysql.cj.jdbc.Driver'
-    password: 'password'
-    url: 'jdbc:mysql://localhost:3306/dmadb'
-    username: 'user'
   devtools:
     add-properties: true
+  datasource:
+    driver-class-name: 'com.mysql.cj.jdbc.Driver'
+    url: 'jdbc:mysql://localhost:3306/dmadb'
+    username: 'user'
+    password: 'password'
+  h2:
+    console:
+      enabled: false
   jpa:
     database-platform: 'org.hibernate.dialect.MySQL8Dialect'
     hibernate:
       ddl-auto: 'none'
-    open-in-view: false
     properties:
       hibernate:
         format_sql: true
