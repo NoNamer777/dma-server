@@ -1,17 +1,20 @@
 FROM gradle:7.3-jdk11 as build
 
+LABEL maintainer = 'Oscar Wellner, https://github.com/NoNamer777'
+
 ADD . /usr/src/tmp
-
 WORKDIR /usr/src/tmp
+RUN ./gradlew build
 
-RUN ./gradlew init && ./gradlew build
+FROM adoptopenjdk/openjdk11:jre-11.0.12_7-ubuntu
 
-FROM gradle:7.2-jre11
+ARG DB_URL
+ARG DB_USER
+ARG DB_PASSWORD
 
-WORKDIR /usr/src/app
-
-COPY --from=build /usr/src/tmp/build/libs/*.jar ./app.jar
+WORKDIR /usr/src/server
+COPY --from=build /usr/src/tmp/build/libs/dma-server-*.jar server.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "/usr/src/app/app.jar"]
+ENTRYPOINT [ "java", "-Dspring.datasource.url=jdbc:$DB_URL", "-Dspring.datasource.username=$DB_USER", "-Dspring.datasource.password=$DB_PASSWORD", "-jar", "server.jar" ]
