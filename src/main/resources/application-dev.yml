@@ -1,3 +1,5 @@
+# Application properties config for DEVELOPMENT environment
+
 dma:
   allowed-origins: '*'
 logging:
