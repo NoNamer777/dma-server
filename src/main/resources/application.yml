@@ -1,3 +1,5 @@
+# Application properties config for PRODUCTION environment
+
 dma:
   allowed-origins: 'https://www.dndmapp.nl.eu.org/'
 logging:
