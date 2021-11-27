@@ -23,7 +23,7 @@ public class SpellDescription extends Description implements Serializable {
 
     @JsonBackReference
     @ManyToOne
-    @JoinColumn(name = "`spell_id`")
+    @JoinColumn(name = "`spell_id`", columnDefinition = "VARCHAR(64) NOT NULL")
     private Spell spell;
 
     public SpellDescription(String id) {

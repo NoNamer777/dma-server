@@ -22,7 +22,7 @@ public class DmaEntity {
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     @Type(type = "uuid-char")
-    @Column(name = "`id`")
+    @Column(name = "`id`", columnDefinition = "VARCHAR(64)")
     private UUID id;
 
     public DmaEntity(String id) {
