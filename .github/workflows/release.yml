@@ -1,4 +1,4 @@
-# This workflow will do a clean installation of run tests, create a Docker image
+# This workflow will run tests, create a Docker image,
 # and releases it to the GitHub Container Registry.
 
 name: release
@@ -52,9 +52,9 @@ jobs:
                 file: ./Dockerfile
                 builder: ${{ steps.buildx.outputs.name }}
                 build-args: |
-                  DMA_DATABASE_URL={{ secrets.DMA_DATABASE_URL }}
-                  DMA_DATABASE_USERNAME={{ secrets.DMA_DATABASE_USER }}
-                  DMA_DATABASE_PASSWORD={{ secrets.DMA_DATABASE_PASSWORD }}
+                  DMA_DATABASE_URL=${{ secrets.DMA_DATABASE_URL }}
+                  DMA_DATABASE_USERNAME=${{ secrets.DMA_DATABASE_USER }}
+                  DMA_DATABASE_PASSWORD=${{ secrets.DMA_DATABASE_PASSWORD }}
                 push: true
                 tags: ${{ steps.meta.outputs.tags }}
                 labels: ${{ steps.meta.outputs.labels }}
