@@ -9,10 +9,9 @@ spring:
   devtools:
     add-properties: false
   datasource:
-    url: 'url'
-    username: 'username'
-    password: 'password'
+    driver-class-name: 'com.mysql.cj.jdbc.Driver'
   jpa:
+    database-platform: 'org.hibernate.dialect.MariaDB103Dialect'
     hibernate:
       ddl-auto: 'none'
     open-in-view: false
