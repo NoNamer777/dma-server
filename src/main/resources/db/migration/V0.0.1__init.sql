@@ -1,5 +1,56 @@
 USE `dmadb`;
 
+CREATE TABLE IF NOT EXISTS `spell` (
+    `id` VARCHAR(64),
+    `name` VARCHAR(64) NOT NULL,
+    `level` TINYINT(2) NOT NULL DEFAULT 0,
+    `magic_school` VARCHAR(64) NOT NULL,
+    `ritual` TINYINT(2) NOT NULL DEFAULT 0,
+    `casting_time` VARCHAR(16) NOT NULL,
+    `range` VARCHAR(16) NOT NULL,
+    `concentration` TINYINT(2) NOT NULL DEFAULT 0,
+    `duration` VARCHAR(16) NOT NULL,
+    CONSTRAINT `spell_pk` PRIMARY KEY (`id`),
+    CONSTRAINT `unique_spell_name` UNIQUE (`name`),
+    CONSTRAINT `spell_idx` UNIQUE INDEX (`id`, `name`),
+    CHECK (`level` >= 0 AND `level` <= 9)
+);
+
+CREATE TABLE `spell_component` (
+    `spell_id` VARCHAR(64),
+    `component` VARCHAR(16),
+    CONSTRAINT `spell_component_pk` PRIMARY KEY (`spell_id`, `component`),
+    CONSTRAINT `spell_component_fk` FOREIGN KEY (`spell_id`) REFERENCES `spell`(`id`)
+);
+
+CREATE TABLE `material_component` (
+    `id` VARCHAR(64),
+    `name` TEXT(64) NOT NULL,
+    `cost` DOUBLE(7, 2) NOT NULL DEFAULT 0.00,
+    `consumed` TINYINT(2) NOT NULL DEFAULT 0,
+    CONSTRAINT `material_component_pk` PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `spell_material_component` (
+    `spell_id` VARCHAR(64),
+    `material_id` VARCHAR(64),
+    CONSTRAINT `spell_material_component_pk` PRIMARY KEY (`spell_id`, `material_id`),
+    CONSTRAINT `unique_spell_material_component` UNIQUE (`spell_id`, `material_id`),
+    CONSTRAINT `spell_material_fk` FOREIGN KEY (`spell_id`) REFERENCES `spell`(`id`),
+    CONSTRAINT `material_spell_fk` FOREIGN KEY (`material_id`) REFERENCES `material_component`(`id`)
+);
+
+CREATE TABLE `spell_description` (
+    `id` VARCHAR(64),
+    `title` VARCHAR(24) DEFAULT NULL,
+    `order` TINYINT(3) NOT NULL DEFAULT 0,
+    `text` MEDIUMTEXT NOT NULL,
+    `spell_id` VARCHAR(64) NOT NULL,
+    CONSTRAINT `spell_description_pk` PRIMARY KEY (`id`),
+    CONSTRAINT `unique_spell_description` UNIQUE (`spell_id`, `order`),
+    CONSTRAINT `spell_description_fk` FOREIGN KEY (`spell_id`) REFERENCES `spell`(`id`)
+);
+
 -- -----------------------------------------------------
 -- Spells
 -- -----------------------------------------------------

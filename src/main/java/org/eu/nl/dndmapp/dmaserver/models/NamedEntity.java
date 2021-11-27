@@ -15,7 +15,7 @@ import java.util.Objects;
 @MappedSuperclass
 public class NamedEntity extends DmaEntity {
 
-    @Column(name = "`name`")
+    @Column(name = "`name`", columnDefinition = "VARCHAR(64) NOT NULL")
     private String name;
 
     public NamedEntity(String id) {

@@ -24,34 +24,34 @@ import java.util.Set;
 @Table(name = "`spell`")
 public class Spell extends NamedEntity {
 
-    @Column(name = "`level`")
+    @Column(name = "`level`", columnDefinition = "TINYINT(2) NOT NULL DEFAULT 0")
     private Integer level = 0;
 
-    @Column(name = "`magic_school`")
+    @Column(name = "`magic_school`", columnDefinition = "VARCHAR(64) NOT NULL")
     @Convert(converter = MagicSchoolConverter.class)
     private MagicSchool magicSchool;
 
-    @Column(name = "`ritual`")
+    @Column(name = "`ritual`", columnDefinition = "TINYINT(2) NOT NULL DEFAULT 0")
     private Boolean ritual = false;
 
-    @Column(name = "`casting_time`")
+    @Column(name = "`casting_time`", columnDefinition = "VARCHAR(16) NOT NULL")
     private String castingTime;
 
-    @Column(name = "`range`")
+    @Column(name = "`range`", columnDefinition = "VARCHAR(16) NOT NULL")
     private String range;
 
-    @Column(name = "`concentration`")
+    @Column(name = "`concentration`", columnDefinition = "TINYINT(2) NOT NULL DEFAULT 0")
     private Boolean concentration = false;
 
-    @Column(name = "`duration`")
+    @Column(name = "`duration`", columnDefinition = "VARCHAR(16) NOT NULL")
     private String duration;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Convert(converter = SpellComponentConverter.class)
-    @Column(name = "`component`")
+    @Column(name = "`component`", columnDefinition = "VARCHAR(16)")
     @JoinTable(
         name = "`spell_component`",
-        joinColumns = @JoinColumn(name = "`spell_id`")
+        joinColumns = @JoinColumn(name = "`spell_id`", columnDefinition = "VARCHAR(64)")
     )
     private Set<SpellComponent> components;
 
@@ -59,8 +59,8 @@ public class Spell extends NamedEntity {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "`spell_material_component`",
-        joinColumns = @JoinColumn(name = "`spell_id`"),
-        inverseJoinColumns = @JoinColumn(name = "`material_id`")
+        joinColumns = @JoinColumn(name = "`spell_id`", columnDefinition = "VARCHAR(24)"),
+        inverseJoinColumns = @JoinColumn(name = "`material_id`", columnDefinition = "VARCHAR(24)")
     )
     private Set<MaterialComponent> materials;
 

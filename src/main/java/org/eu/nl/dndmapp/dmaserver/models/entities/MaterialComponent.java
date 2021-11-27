@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.eu.nl.dndmapp.dmaserver.models.DmaEntity;
 import org.eu.nl.dndmapp.dmaserver.models.NamedEntity;
 
 import javax.persistence.*;
@@ -16,12 +17,15 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "`material_component`")
-public class MaterialComponent extends NamedEntity {
+public class MaterialComponent extends DmaEntity {
 
-    @Column(name = "`cost`")
+    @Column(name = "`name`", columnDefinition = "TEXT(64) NOT NULL")
+    private String name;
+
+    @Column(name = "`cost`", columnDefinition = "DOUBLE(7, 2) NOT NULL DEFAULT 0.00")
     private Double cost = 0.0;
 
-    @Column(name = "`consumed`")
+    @Column(name = "`consumed`", columnDefinition = "TINYINT(2) NOT NULL DEFAULT 0")
     private Boolean consumedBySpell = false;
 
     @JsonBackReference

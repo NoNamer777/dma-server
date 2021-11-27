@@ -13,7 +13,7 @@ spring:
   jpa:
     database-platform: 'org.hibernate.dialect.MariaDB103Dialect'
     hibernate:
-      ddl-auto: 'none'
+      ddl-auto: 'validate'
     open-in-view: false
   sql:
     init:
