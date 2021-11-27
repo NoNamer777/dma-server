@@ -74,12 +74,11 @@ for this repository. To use a container use the following command:
 ```shell
 docker run -d \
   -p 8080:8080 \
-  --name=dma-server \
-  ghcr.io/NoNamer777/dma-server \
-  -e "SERVER_VERSION=<0.0.0>" \
-  -e "DB_URL=<database_location>" \
-  -e "DB_USER=<database_username>" \
-  -e "DB_PASSWORD=<database_password>"
+  -e "SPRING_DATASOURCE_URL=jdbc:mysql://<host>:<port>/<database_name>" \
+  -e "SPRING_DATASOURCE_USERNAME=<database user>" \
+  -e "SPRING_DATASOURCE_PASSWORD=<database user password>" \
+  ghcr.io/nonamer777/dma-server \
+  --name dma-server
 ```
 
 or by using the following structure inside your `docker-compose.yml` file:
@@ -87,15 +86,15 @@ or by using the following structure inside your `docker-compose.yml` file:
 version: '2.3'
 
 services:
-  sever:
-    image: 'ghcr.io/NoNamer777/dma-server'
+  server:
+    image: 'ghcr.io/nonamer777/dma-server'
     container_name: 'dma-server'
     ports:
         - '8080:8080'
     environment:
-      - DB_USER=database_user
-      - DB_PASSWORD=database_password
-      - DB_URL=database_location
+      - SPRING_DATASOURCE_URL=jdbc:mysql://<host>:<port>/<database_name>
+      - SPRING_DATASOURCE_USERNAME=<database user>
+      - SPRING_DATASOURCE_PASSWORD=<database user password>
     restart: 'unless-stopped'
 ```
 
