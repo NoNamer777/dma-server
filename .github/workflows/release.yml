@@ -51,10 +51,6 @@ jobs:
                 context: ./
                 file: ./Dockerfile
                 builder: ${{ steps.buildx.outputs.name }}
-                build-args: |
-                  DMA_DATABASE_URL=${{ secrets.DMA_DATABASE_URL }}
-                  DMA_DATABASE_USERNAME=${{ secrets.DMA_DATABASE_USER }}
-                  DMA_DATABASE_PASSWORD=${{ secrets.DMA_DATABASE_PASSWORD }}
                 push: true
                 tags: ${{ steps.meta.outputs.tags }}
                 labels: ${{ steps.meta.outputs.labels }}
