@@ -56,13 +56,8 @@ public class Spell extends NamedEntity {
     private Set<SpellComponent> components;
 
     @JsonManagedReference
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-        name = "`spell_material_component`",
-        joinColumns = @JoinColumn(name = "`spell_id`", columnDefinition = "VARCHAR(24)"),
-        inverseJoinColumns = @JoinColumn(name = "`material_id`", columnDefinition = "VARCHAR(24)")
-    )
-    private Set<MaterialComponent> materials;
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "id.spell")
+    private Set<SpellMaterial> materials;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "spell", fetch = FetchType.EAGER, orphanRemoval = true)
@@ -87,25 +82,23 @@ public class Spell extends NamedEntity {
         }
     }
 
-    public void addMaterial(MaterialComponent material) {
+    public void addMaterial(SpellMaterial material) {
         if (materials == null) {
             this.materials = new HashSet<>();
         }
         materials.add(material);
 
-        material.addSpell(this);
+        material.setSpell(this);
     }
 
-    public void removeMaterial(MaterialComponent material) {
+    public void removeMaterial(SpellMaterial material) {
         materials.remove(material);
-
-        material.removeSpell(this);
     }
 
     public void removeAllMaterials() {
-        List<MaterialComponent> materialComponents = new ArrayList<>(materials);
+        List<SpellMaterial> materials = new ArrayList<>(this.materials);
 
-        materialComponents.forEach(this::removeMaterial);
+        materials.forEach(this::removeMaterial);
     }
 
     public void addDescription(SpellDescription description) {

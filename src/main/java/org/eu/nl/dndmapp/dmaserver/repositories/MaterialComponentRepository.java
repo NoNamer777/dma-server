@@ -1,12 +1,12 @@
 package org.eu.nl.dndmapp.dmaserver.repositories;
 
-import org.eu.nl.dndmapp.dmaserver.models.entities.MaterialComponent;
+import org.eu.nl.dndmapp.dmaserver.models.entities.Material;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
 import java.util.UUID;
 
-public interface MaterialComponentRepository extends CrudRepository<MaterialComponent, UUID> {
+public interface MaterialComponentRepository extends CrudRepository<Material, UUID> {
 
-    Optional<MaterialComponent> findByName(String name);
+    Optional<Material> findByDescription(String description);
 }
