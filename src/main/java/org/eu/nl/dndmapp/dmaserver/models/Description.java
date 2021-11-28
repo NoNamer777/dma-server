@@ -17,7 +17,7 @@ public class Description extends DmaEntity {
     @Column(name = "`title`", columnDefinition = "VARCHAR(24) DEFAULT NULL")
     private String title;
 
-    @Column(name = "`order`", columnDefinition = "TINYINT(3) NOT NULL DEFAULT 0")
+    @Column(name = "`order`", columnDefinition = "TINYINT NOT NULL DEFAULT 0")
     private Integer order;
 
     @Column(name = "`text`", columnDefinition = "MEDIUMTEXT NOT NULL")

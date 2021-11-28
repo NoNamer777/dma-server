@@ -24,14 +24,14 @@ import java.util.Set;
 @Table(name = "`spell`")
 public class Spell extends NamedEntity {
 
-    @Column(name = "`level`", columnDefinition = "TINYINT(2) NOT NULL DEFAULT 0")
+    @Column(name = "`level`", columnDefinition = "TINYINT NOT NULL DEFAULT 0")
     private Integer level = 0;
 
     @Column(name = "`magic_school`", columnDefinition = "VARCHAR(64) NOT NULL")
     @Convert(converter = MagicSchoolConverter.class)
     private MagicSchool magicSchool;
 
-    @Column(name = "`ritual`", columnDefinition = "TINYINT(2) NOT NULL DEFAULT 0")
+    @Column(name = "`ritual`", columnDefinition = "TINYINT NOT NULL DEFAULT 0")
     private Boolean ritual = false;
 
     @Column(name = "`casting_time`", columnDefinition = "VARCHAR(16) NOT NULL")
@@ -40,7 +40,7 @@ public class Spell extends NamedEntity {
     @Column(name = "`range`", columnDefinition = "VARCHAR(16) NOT NULL")
     private String range;
 
-    @Column(name = "`concentration`", columnDefinition = "TINYINT(2) NOT NULL DEFAULT 0")
+    @Column(name = "`concentration`", columnDefinition = "TINYINT NOT NULL DEFAULT 0")
     private Boolean concentration = false;
 
     @Column(name = "`duration`", columnDefinition = "VARCHAR(16) NOT NULL")
@@ -56,13 +56,8 @@ public class Spell extends NamedEntity {
     private Set<SpellComponent> components;
 
     @JsonManagedReference
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-        name = "`spell_material_component`",
-        joinColumns = @JoinColumn(name = "`spell_id`", columnDefinition = "VARCHAR(24)"),
-        inverseJoinColumns = @JoinColumn(name = "`material_id`", columnDefinition = "VARCHAR(24)")
-    )
-    private Set<MaterialComponent> materials;
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "id.spell")
+    private Set<SpellMaterial> materials;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "spell", fetch = FetchType.EAGER, orphanRemoval = true)
@@ -87,25 +82,23 @@ public class Spell extends NamedEntity {
         }
     }
 
-    public void addMaterial(MaterialComponent material) {
+    public void addMaterial(SpellMaterial material) {
         if (materials == null) {
             this.materials = new HashSet<>();
         }
         materials.add(material);
 
-        material.addSpell(this);
+        material.setSpell(this);
     }
 
-    public void removeMaterial(MaterialComponent material) {
+    public void removeMaterial(SpellMaterial material) {
         materials.remove(material);
-
-        material.removeSpell(this);
     }
 
     public void removeAllMaterials() {
-        List<MaterialComponent> materialComponents = new ArrayList<>(materials);
+        List<SpellMaterial> materials = new ArrayList<>(this.materials);
 
-        materialComponents.forEach(this::removeMaterial);
+        materials.forEach(this::removeMaterial);
     }
 
     public void addDescription(SpellDescription description) {
