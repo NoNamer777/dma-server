@@ -24,14 +24,14 @@ import java.util.Set;
 @Table(name = "`spell`")
 public class Spell extends NamedEntity {
 
-    @Column(name = "`level`", columnDefinition = "TINYINT(2) NOT NULL DEFAULT 0")
+    @Column(name = "`level`", columnDefinition = "TINYINT NOT NULL DEFAULT 0")
     private Integer level = 0;
 
     @Column(name = "`magic_school`", columnDefinition = "VARCHAR(64) NOT NULL")
     @Convert(converter = MagicSchoolConverter.class)
     private MagicSchool magicSchool;
 
-    @Column(name = "`ritual`", columnDefinition = "TINYINT(2) NOT NULL DEFAULT 0")
+    @Column(name = "`ritual`", columnDefinition = "TINYINT NOT NULL DEFAULT 0")
     private Boolean ritual = false;
 
     @Column(name = "`casting_time`", columnDefinition = "VARCHAR(16) NOT NULL")
@@ -40,7 +40,7 @@ public class Spell extends NamedEntity {
     @Column(name = "`range`", columnDefinition = "VARCHAR(16) NOT NULL")
     private String range;
 
-    @Column(name = "`concentration`", columnDefinition = "TINYINT(2) NOT NULL DEFAULT 0")
+    @Column(name = "`concentration`", columnDefinition = "TINYINT NOT NULL DEFAULT 0")
     private Boolean concentration = false;
 
     @Column(name = "`duration`", columnDefinition = "VARCHAR(16) NOT NULL")
