@@ -1,10 +1,10 @@
 plugins {
-    id 'org.springframework.boot' version '2.5.5'
+    id "org.springframework.boot" version "2.6.4"
     id "io.spring.dependency-management" version "1.0.11.RELEASE"
     id "java"
 }
 
-String springBootVersion = "2.5.5"
+String springBootVersion = "2.6.4"
 
 group = "org.eu.nl.dnd-mapp"
 version = "0.0.1"
