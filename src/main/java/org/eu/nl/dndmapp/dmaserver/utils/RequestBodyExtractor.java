@@ -1,4 +1,4 @@
-package org.eu.nl.dndmapp.dmaserver.models;
+package org.eu.nl.dndmapp.dmaserver.utils;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
