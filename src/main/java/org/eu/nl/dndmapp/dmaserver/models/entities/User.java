@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.eu.nl.dndmapp.dmaserver.models.DmaEntity;
-import org.eu.nl.dndmapp.dmaserver.models.RequestBodyExtractor;
+import org.eu.nl.dndmapp.dmaserver.utils.RequestBodyExtractor;
 import org.eu.nl.dndmapp.dmaserver.models.converters.UserRoleConverter;
 import org.eu.nl.dndmapp.dmaserver.models.enums.UserRole;
 import org.eu.nl.dndmapp.dmaserver.models.exceptions.DataMismatchException;
