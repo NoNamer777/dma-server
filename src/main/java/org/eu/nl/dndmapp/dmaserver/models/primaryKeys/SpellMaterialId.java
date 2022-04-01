@@ -1,9 +1,5 @@
 package org.eu.nl.dndmapp.dmaserver.models.primaryKeys;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.eu.nl.dndmapp.dmaserver.models.entities.Material;
 import org.eu.nl.dndmapp.dmaserver.models.entities.Spell;
 
@@ -13,33 +9,66 @@ import javax.persistence.ManyToOne;
 import java.io.Serializable;
 import java.util.Objects;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Embeddable
 public class SpellMaterialId implements Serializable {
-
     @ManyToOne
-    @JoinColumn(name = "`spell_id`", columnDefinition = "VARCHAR(64)")
+    @JoinColumn(
+        name = "`spell_id`",
+        columnDefinition = "VARCHAR(64)"
+    )
     private Spell spell;
 
     @ManyToOne
-    @JoinColumn(name = "`material_id`", columnDefinition = "VARCHAR(64)")
+    @JoinColumn(
+        name = "`material_id`",
+        columnDefinition = "VARCHAR(64)"
+    )
     private Material material;
 
+    /* CONSTRUCTORS */
+
+    public SpellMaterialId() {}
+
+    public SpellMaterialId(Spell spell, Material material) {
+        this.spell = spell;
+        this.material = material;
+    }
+
+    /* GETTERS & SETTERS */
+
+    public Spell getSpell() {
+        return spell;
+    }
+
+    public void setSpell(Spell spell) {
+        this.spell = spell;
+    }
+
+    public Material getMaterial() {
+        return material;
+    }
+
+    public void setMaterial(Material material) {
+        this.material = material;
+    }
+
     @Override
-    public boolean equals(Object other) {
-        if (other == null || getClass() != other.getClass()) return false;
-        if (this == other) return true;
+    public boolean equals(Object object) {
+        if (!(object instanceof SpellMaterialId)) return false;
+        if (this == object) return true;
 
-        SpellMaterialId that = (SpellMaterialId) other;
+        SpellMaterialId other = (SpellMaterialId) object;
 
-        return this.spell.equals(that.spell) && this.material.equals(that.material);
+        return this.spell.equals(other.spell) && this.material.equals(other.material);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(spell, material);
+        return Objects.hash(spell.hashCode(), material.hashCode());
+    }
+
+    @Override
+    public String toString() {
+        return String.format("SpellMaterialId{ %s, %s", this.spell.toString(), this.material.toString());
     }
 }

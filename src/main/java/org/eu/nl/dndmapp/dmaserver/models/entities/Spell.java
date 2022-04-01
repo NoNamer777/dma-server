@@ -1,10 +1,6 @@
 package org.eu.nl.dndmapp.dmaserver.models.entities;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.eu.nl.dndmapp.dmaserver.models.NamedEntity;
 import org.eu.nl.dndmapp.dmaserver.models.converters.MagicSchoolConverter;
 import org.eu.nl.dndmapp.dmaserver.models.converters.SpellComponentConverter;
@@ -17,22 +13,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Getter
-@Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "`spell`")
 public class Spell extends NamedEntity {
-
     @Column(name = "`level`", columnDefinition = "TINYINT NOT NULL DEFAULT 0")
-    private Integer level = 0;
+    private Integer level;
 
     @Column(name = "`magic_school`", columnDefinition = "VARCHAR(64) NOT NULL")
     @Convert(converter = MagicSchoolConverter.class)
     private MagicSchool magicSchool;
 
     @Column(name = "`ritual`", columnDefinition = "TINYINT NOT NULL DEFAULT 0")
-    private Boolean ritual = false;
+    private Boolean ritual;
 
     @Column(name = "`casting_time`", columnDefinition = "VARCHAR(16) NOT NULL")
     private String castingTime;
@@ -41,7 +33,7 @@ public class Spell extends NamedEntity {
     private String range;
 
     @Column(name = "`concentration`", columnDefinition = "TINYINT NOT NULL DEFAULT 0")
-    private Boolean concentration = false;
+    private Boolean concentration;
 
     @Column(name = "`duration`", columnDefinition = "VARCHAR(16) NOT NULL")
     private String duration;
@@ -53,25 +45,125 @@ public class Spell extends NamedEntity {
         name = "`spell_component`",
         joinColumns = @JoinColumn(name = "`spell_id`", columnDefinition = "VARCHAR(64)")
     )
-    private Set<SpellComponent> components;
+    private final Set<SpellComponent> components = new HashSet<>();;
 
     @JsonManagedReference
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "id.spell")
-    private Set<SpellMaterial> materials;
+    private final Set<SpellMaterial> materials = new HashSet<>();;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "spell", fetch = FetchType.EAGER, orphanRemoval = true)
-    private Set<SpellDescription> descriptions;
+    private final Set<SpellDescription> descriptions = new HashSet<>();
 
-    public Spell(String id) {
-        super(id);
+    /* CONSTRUCTORS */
+
+    public Spell() {
+        super();
+    }
+
+    public Spell(String id, String name) {
+        super(id, name);
+    }
+
+    public Spell(
+        String id,
+        String name,
+        Integer level,
+        MagicSchool magicSchool,
+        Boolean ritual,
+        String castingTime,
+        String range,
+        Boolean concentration,
+        String duration,
+        List<SpellComponent> components,
+        List<SpellMaterial> materials,
+        List<SpellDescription> descriptions
+    ) {
+        super(id, name);
+
+        this.level = level;
+        this.magicSchool = magicSchool;
+        this.ritual = ritual;
+        this.castingTime = castingTime;
+        this.range = range;
+        this.concentration = concentration;
+        this.duration = duration;
+
+        addAllComponents(components);
+        addAllMaterials(materials);
+        addAllDescriptions(descriptions);
+    }
+
+    /* GETTERS & SETTERS */
+
+    public Integer getLevel() {
+        return level;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
+    }
+
+    public MagicSchool getMagicSchool() {
+        return magicSchool;
+    }
+
+    public void setMagicSchool(MagicSchool magicSchool) {
+        this.magicSchool = magicSchool;
+    }
+
+    public Boolean getRitual() {
+        return ritual;
+    }
+
+    public void setRitual(Boolean ritual) {
+        this.ritual = ritual;
+    }
+
+    public String getCastingTime() {
+        return castingTime;
+    }
+
+    public void setCastingTime(String castingTime) {
+        this.castingTime = castingTime;
+    }
+
+    public String getRange() {
+        return range;
+    }
+
+    public void setRange(String range) {
+        this.range = range;
+    }
+
+    public Boolean getConcentration() {
+        return concentration;
+    }
+
+    public void setConcentration(Boolean concentration) {
+        this.concentration = concentration;
+    }
+
+    public String getDuration() {
+        return duration;
+    }
+
+    public void setDuration(String duration) {
+        this.duration = duration;
+    }
+
+    public void addAllComponents(List<SpellComponent> components) {
+        components.forEach(this::addComponent);
     }
 
     public void addComponent(SpellComponent component) {
-        if (components == null) {
-            components = new HashSet<>();
-        }
         components.add(component);
+    }
+
+    public void removeAllComponents() {
+        Set<SpellComponent> oldComponents = new HashSet<>(this.components);
+
+        oldComponents.forEach(this::removeComponent);
     }
 
     public void removeComponent(SpellComponent component) {
@@ -82,17 +174,14 @@ public class Spell extends NamedEntity {
         }
     }
 
+    public void addAllMaterials(List<SpellMaterial> materials) {
+        materials.forEach(this::addMaterial);
+    }
+
     public void addMaterial(SpellMaterial material) {
-        if (materials == null) {
-            this.materials = new HashSet<>();
-        }
         materials.add(material);
 
         material.setSpell(this);
-    }
-
-    public void removeMaterial(SpellMaterial material) {
-        materials.remove(material);
     }
 
     public void removeAllMaterials() {
@@ -101,17 +190,24 @@ public class Spell extends NamedEntity {
         materials.forEach(this::removeMaterial);
     }
 
+    public void removeMaterial(SpellMaterial material) {
+        materials.remove(material);
+    }
+
+    public void addAllDescriptions(List<SpellDescription> descriptions) {
+        descriptions.forEach(this::addDescription);
+    }
+
     public void addDescription(SpellDescription description) {
-        if (descriptions == null) {
-            descriptions = new HashSet<>();
-        }
         descriptions.add(description);
 
         description.setSpell(this);
     }
 
-    public void addAllDescriptions(List<SpellDescription> descriptions) {
-        descriptions.forEach(this::addDescription);
+    public void removeAllDescriptions() {
+        List<SpellDescription> spellDescriptions = new ArrayList<>(descriptions);
+
+        spellDescriptions.forEach(this::removeDescription);
     }
 
     public void removeDescription(SpellDescription description) {
@@ -120,9 +216,25 @@ public class Spell extends NamedEntity {
         description.setSpell(null);
     }
 
-    public void removeAllDescriptions() {
-        List<SpellDescription> spellDescriptions = new ArrayList<>(descriptions);
+    @Override
+    public boolean equals(Object object) {
+        return super.equals(object);
+    }
 
-        spellDescriptions.forEach(this::removeDescription);
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+            "Spell{ id: '%s', name: '%s', level: '%d', magicSchool: '%s' }",
+            this.getId(),
+            this.getName(),
+            this.level,
+            this.magicSchool == null ? null : this.magicSchool.getName()
+        );
+    }
     }
 }

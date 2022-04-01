@@ -1,14 +1,9 @@
 package org.eu.nl.dndmapp.dmaserver.models.enums;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 import java.util.Arrays;
 
-@Getter
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public enum MagicSchool {
     ABJURATION("Abjuration"),
     CONJURATION("Conjuration"),
@@ -22,11 +17,23 @@ public enum MagicSchool {
     @JsonValue
     private final String name;
 
+    /* CONSTRUCTORS */
+
+    MagicSchool(String name) {
+        this.name = name;
+    }
+
+    /* GETTERS & SETTERS */
+
+    public String getName() {
+        return this.name;
+    }
+
     public static MagicSchool parse(String value) {
         if (value == null) return null;
 
         return Arrays.stream(MagicSchool.values())
-            .filter(magicSchool -> magicSchool.getName().equals(value))
+            .filter(magicSchool -> magicSchool.name.equals(value))
             .findFirst()
             .orElse(null);
     }
