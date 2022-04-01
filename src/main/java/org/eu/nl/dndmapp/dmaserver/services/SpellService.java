@@ -11,13 +11,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
-@Service
-public class SpellsService {
 
+@Service
+public class SpellService {
     private final SpellRepository spellsRepo;
 
     @Autowired
-    public SpellsService(SpellRepository spellsRepo) {
+    public SpellService(SpellRepository spellsRepo) {
         this.spellsRepo = spellsRepo;
     }
 

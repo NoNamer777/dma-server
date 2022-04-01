@@ -1,7 +1,7 @@
 package org.eu.nl.dndmapp.dmaserver.controllers;
 
 import org.eu.nl.dndmapp.dmaserver.models.entities.Spell;
-import org.eu.nl.dndmapp.dmaserver.services.SpellsService;
+import org.eu.nl.dndmapp.dmaserver.services.SpellService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -12,12 +12,11 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/spell")
 public class SpellRestController {
-
-    private final SpellsService spellsService;
+    private final SpellService spellService;
 
     @Autowired
-    public SpellRestController(SpellsService spellsService) {
-        this.spellsService = spellsService;
+    public SpellRestController(SpellService spellService) {
+        this.spellService = spellService;
     }
 
     @GetMapping
@@ -35,7 +34,7 @@ public class SpellRestController {
     @GetMapping("/{id}")
     public ResponseEntity<Spell> getSpell(@PathVariable("id") String id) {
         UUID spellId = UUID.fromString(id);
-        Spell spellFoundById = spellsService.getSpell(spellId);
+        Spell spellFoundById = spellService.getSpell(spellId);
 
         return ResponseEntity.ok(spellFoundById);
     }
