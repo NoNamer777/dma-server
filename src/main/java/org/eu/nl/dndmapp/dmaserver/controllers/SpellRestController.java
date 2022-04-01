@@ -1,42 +1,75 @@
 package org.eu.nl.dndmapp.dmaserver.controllers;
 
 import org.eu.nl.dndmapp.dmaserver.models.entities.Spell;
-import org.eu.nl.dndmapp.dmaserver.services.SpellsService;
+import org.eu.nl.dndmapp.dmaserver.services.SpellService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+
+import static org.eu.nl.dndmapp.dmaserver.models.filters.EntityFilter.*;
 
 @RestController
 @RequestMapping("/api/spell")
 public class SpellRestController {
-
-    private final SpellsService spellsService;
+    private final SpellService spellService;
 
     @Autowired
-    public SpellRestController(SpellsService spellsService) {
-        this.spellsService = spellsService;
+    public SpellRestController(SpellService spellService) {
+        this.spellService = spellService;
     }
 
     @GetMapping
     public Page<Spell> getSpells(
-        @RequestParam(value = "page", required = false, defaultValue = "0") int page,
-        @RequestParam(value = "name", required = false) String name
-    ) {
-        if (name != null) {
-            return spellsService.querySpellsByNameLike("%" + name + "%", page);
-        }
+        @RequestParam(name = FILTER_KEY_PAGE_NUMBER, required = false, defaultValue = "0") Integer pageNumber,
+        @RequestParam(name = FILTER_KEY_PAGE_SIZE, required = false, defaultValue = "20") Integer pageSize,
+        @RequestParam(name = FILTER_KEY_SORT_DIRECTION, required = false, defaultValue = "ASC") String sortDirection,
+        HttpServletRequest request
+    ) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        Map<String, Object> filters = this.buildFiltersMap(request.getParameterMap());
 
-        return spellsService.getSpells(page);
+        if (filters.size() > 0) {
+            return spellService.getSpellsFiltered(filters, pageNumber, pageSize, sortDirection);
+        }
+        return spellService.getSpells(pageNumber, pageSize, sortDirection);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Spell> getSpell(@PathVariable("id") String id) {
         UUID spellId = UUID.fromString(id);
-        Spell spellFoundById = spellsService.getSpell(spellId);
+        Spell spellFoundById = spellService.getSpell(spellId);
 
         return ResponseEntity.ok(spellFoundById);
+    }
+
+    private Map<String, Object> buildFiltersMap(Map<String, String[]> requestParameters) {
+        Map<String, Object> filters = new HashMap<>();
+
+        requestParameters.forEach((key, value) -> {
+            switch (key) {
+                case FILTER_KEY_NAME:
+                case FILTER_KEY_CASTING_TIME:
+                case FILTER_KEY_RANGE:
+                case FILTER_KEY_DURATION:
+                case FILTER_KEY_MAGIC_SCHOOL:
+                    filters.put(key, value[0]);
+                    break;
+                case FILTER_KEY_RITUAL:
+                case FILTER_KEY_CONCENTRATION:
+                    filters.put(key, Boolean.valueOf(value[0]));
+                    break;
+                case FILTER_KEY_LEVEL:
+                    filters.put(key, Integer.valueOf(value[0]));
+                    break;
+            }
+        });
+
+        return filters;
     }
 }

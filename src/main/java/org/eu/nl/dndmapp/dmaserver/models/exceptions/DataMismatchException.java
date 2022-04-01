@@ -8,4 +8,8 @@ public class DataMismatchException extends RuntimeException {
     public DataMismatchException(String message) {
         super(message);
     }
+
+    public DataMismatchException(String messageFormat, Object... messageValues) {
+        super(String.format(messageFormat, messageValues));
+    }
 }

@@ -1,8 +1,6 @@
 package org.eu.nl.dndmapp.dmaserver.models;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import org.eu.nl.dndmapp.dmaserver.models.exceptions.DataMismatchException;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
@@ -13,28 +11,50 @@ import javax.persistence.MappedSuperclass;
 import java.util.Objects;
 import java.util.UUID;
 
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @MappedSuperclass
 public class DmaEntity {
-
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
     @Type(type = "uuid-char")
-    @Column(name = "`id`", columnDefinition = "VARCHAR(64)")
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(
+        name = "uuid",
+        strategy = "org.hibernate.id.UUIDGenerator"
+    )
+    @Column(
+        name = "`id`",
+        columnDefinition = "VARCHAR(64)"
+    )
     private UUID id;
+
+    /* CONSTRUCTORS */
+
+    public DmaEntity() {}
 
     public DmaEntity(String id) {
         if (id == null) return;
 
-        this.id = UUID.fromString(id);
+        try {
+            this.id = UUID.fromString(id);
+        }
+        catch (IllegalArgumentException exception) {
+            throw new DataMismatchException("The ID '%s' is not a valid UUID format. Please, provide a valid ID.", id);
+        }
+    }
+
+    /* GETTERS & SETTERS */
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     @Override
     public boolean equals(Object object) {
+        if (!(object instanceof DmaEntity)) return false;
         if (this == object) return true;
-        if (object == null || this.getClass() != object.getClass()) return false;
 
         DmaEntity other = (DmaEntity) object;
 
@@ -43,6 +63,11 @@ public class DmaEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(this.id);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("DmaEntity{ id: '%s' }", this.getId());
     }
 }

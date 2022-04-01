@@ -3,22 +3,15 @@ package org.eu.nl.dndmapp.dmaserver.models.entities;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.eu.nl.dndmapp.dmaserver.models.DmaEntity;
-import org.eu.nl.dndmapp.dmaserver.utils.RequestBodyExtractor;
 import org.eu.nl.dndmapp.dmaserver.models.converters.UserRoleConverter;
 import org.eu.nl.dndmapp.dmaserver.models.enums.UserRole;
 import org.eu.nl.dndmapp.dmaserver.models.exceptions.DataMismatchException;
+import org.eu.nl.dndmapp.dmaserver.utils.RequestBodyExtractor;
 
 import javax.persistence.*;
 import java.util.*;
 
-@Getter
-@Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "`user`")
 public class User extends DmaEntity {
@@ -28,7 +21,6 @@ public class User extends DmaEntity {
     )
     private String username;
 
-    @Setter(AccessLevel.NONE)
     @ElementCollection(fetch = FetchType.EAGER)
     @Convert(converter = UserRoleConverter.class)
     @Column(
@@ -43,8 +35,14 @@ public class User extends DmaEntity {
     ))
     private final Set<UserRole> roles = new HashSet<>();
 
-    public User(String id) {
+    /* CONSTRUCTORS */
+
+    public User() {}
+
+    public User(String id, String username) {
         super(id);
+
+        this.username = username;
     }
 
     public static User extractFromJSON(ObjectNode jsonObject) throws DataMismatchException {
@@ -71,14 +69,54 @@ public class User extends DmaEntity {
             .build();
     }
 
+    /* GETTERS AND SETTERS */
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public Set<UserRole> getRoles() {
+        return roles;
+    }
+
     public void assignRole(UserRole role) {
         this.roles.add(role);
     }
 
+    public void revokeRole(UserRole role) {
+        this.roles.remove(role);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (!super.equals(object) || !(object instanceof User)) return false;
+        if (this == object) return true;
+
+        User other = (User) object;
+
+        return this.username.equals(other.username);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), this.getUsername());
+    }
+
+    @Override
+    public String toString() {
+        return String.format("User{ id: '%s', username: '%s' }", this.getId(), this.getUsername());
+    }
+
+    /* BUILDERS */
+
     public static class Builder {
-        private final Set<UserRole> roles;
         private String id;
         private String username;
+        private final Set<UserRole> roles;
 
         public Builder() {
             this.roles = new HashSet<>();
@@ -87,15 +125,11 @@ public class User extends DmaEntity {
         public Builder withId(String id) {
             this.id = id;
 
-            System.out.printf("Assigned ID '%s' to User object\n", this.id);
-
             return this;
         }
 
         public Builder withUsername(String username) {
             this.username = username;
-
-            System.out.printf("Assigned username '%s' to User object\n", this.username);
 
             return this;
         }
@@ -109,8 +143,7 @@ public class User extends DmaEntity {
         }
 
         public User build() {
-            User user = new User(id);
-            user.setUsername(username);
+            User user = new User(id, username);
 
             this.roles.forEach(user::assignRole);
 
