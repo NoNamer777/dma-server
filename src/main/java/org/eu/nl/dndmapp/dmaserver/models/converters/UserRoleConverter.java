@@ -14,6 +14,6 @@ public class UserRoleConverter implements AttributeConverter<UserRole, String> {
 
     @Override
     public String convertToDatabaseColumn(UserRole role) {
-        return role.getValue();
+        return role.getName();
     }
 }

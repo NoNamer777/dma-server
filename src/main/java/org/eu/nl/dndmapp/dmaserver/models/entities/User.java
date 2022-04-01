@@ -110,10 +110,13 @@ public class User extends DmaEntity {
     public String toString() {
         return String.format("User{ id: '%s', username: '%s' }", this.getId(), this.getUsername());
     }
+
+    /* BUILDERS */
+
     public static class Builder {
-        private final Set<UserRole> roles;
         private String id;
         private String username;
+        private final Set<UserRole> roles;
 
         public Builder() {
             this.roles = new HashSet<>();
@@ -122,15 +125,11 @@ public class User extends DmaEntity {
         public Builder withId(String id) {
             this.id = id;
 
-            System.out.printf("Assigned ID '%s' to User object\n", this.id);
-
             return this;
         }
 
         public Builder withUsername(String username) {
             this.username = username;
-
-            System.out.printf("Assigned username '%s' to User object\n", this.username);
 
             return this;
         }
@@ -144,8 +143,7 @@ public class User extends DmaEntity {
         }
 
         public User build() {
-            User user = new User(id);
-            user.setUsername(username);
+            User user = new User(id, username);
 
             this.roles.forEach(user::assignRole);
 

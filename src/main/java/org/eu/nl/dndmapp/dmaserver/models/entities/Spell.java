@@ -236,5 +236,117 @@ public class Spell extends NamedEntity {
             this.magicSchool == null ? null : this.magicSchool.getName()
         );
     }
+
+    /* BUILDERS */
+
+    public static class SpellBuilder {
+        private String id;
+        private String name;
+        private Integer level;
+        private MagicSchool magicSchool;
+        private Boolean ritual;
+        private String castingTime;
+        private String range;
+        private Boolean concentration;
+        private String duration;
+        private final List<SpellComponent> components;
+        private final List<SpellMaterial> materials;
+        private final List<SpellDescription> descriptions;
+
+        public SpellBuilder() {
+            this.components = new ArrayList<>();
+            this.materials = new ArrayList<>();
+            this.descriptions = new ArrayList<>();
+        }
+
+        public Spell build() {
+            Spell spell = new Spell(this.id, this.name);
+
+            spell.setLevel(this.level);
+            spell.setMagicSchool(this.magicSchool);
+            spell.setRitual(this.ritual);
+            spell.setCastingTime(this.castingTime);
+            spell.setRange(this.range);
+            spell.setConcentration(this.concentration);
+            spell.setDuration(this.duration);
+
+            spell.addAllComponents(this.components);
+            spell.addAllMaterials(this.materials);
+            spell.addAllDescriptions(this.descriptions);
+
+            return spell;
+        }
+
+        public SpellBuilder withId(String id) {
+            this.id = id;
+
+            return this;
+        }
+
+        public SpellBuilder withName(String name) {
+            this.name = name;
+
+            return this;
+        }
+
+        public SpellBuilder withLevel(Integer level) {
+            this.level = level;
+
+            return this;
+        }
+
+        public SpellBuilder withMagicSchool(String magicSchool) {
+            this.magicSchool = MagicSchool.parse(magicSchool);
+
+            return this;
+        }
+
+        public SpellBuilder isRitual() {
+            this.ritual = true;
+
+            return this;
+        }
+
+        public SpellBuilder withCastingTime(String castingTime) {
+            this.castingTime = castingTime;
+
+            return this;
+        }
+
+        public SpellBuilder withRange(String range) {
+            this.range = range;
+
+            return this;
+        }
+
+        public SpellBuilder requiresConcentration() {
+            this.concentration = true;
+
+            return this;
+        }
+
+        public SpellBuilder withDuration(String duration) {
+            this.duration = duration;
+
+            return this;
+        }
+
+        public SpellBuilder withComponents(List<SpellComponent> components) {
+            this.components.addAll(components);
+
+            return this;
+        }
+
+        public SpellBuilder withMaterials(List<SpellMaterial> materials) {
+            this.materials.addAll(materials);
+
+            return this;
+        }
+
+        public SpellBuilder withDescriptions(List<SpellDescription> descriptions) {
+            this.descriptions.addAll(descriptions);
+
+            return this;
+        }
     }
 }
