@@ -63,7 +63,6 @@ public class SpellService {
             spellBuilder.build(),
             matcher
                 .withIgnorePaths(ignoredPaths.toArray(String[]::new))
-                .withIgnoreNullValues()
                 .withIgnoreCase()
         );
 
