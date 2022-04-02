@@ -8,6 +8,7 @@ public class EntityFilter {
     public final static String FILTER_KEY_PAGE_NUMBER = "pageNumber";
     public final static String FILTER_KEY_PAGE_SIZE = "pageSize";
     public final static String FILTER_KEY_SORT_DIRECTION = "sortDirection";
+    public final static String FILTER_KEY_SORT_PROPERTY = "sortOnProperty";
 
     public final static String FILTER_KEY_NAME = "name";
     public final static String FILTER_KEY_LEVEL = "level";

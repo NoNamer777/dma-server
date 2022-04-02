@@ -31,12 +31,13 @@ public class SpellRestController {
         @RequestParam(name = FILTER_KEY_PAGE_NUMBER, required = false, defaultValue = "0") Integer pageNumber,
         @RequestParam(name = FILTER_KEY_PAGE_SIZE, required = false, defaultValue = "20") Integer pageSize,
         @RequestParam(name = FILTER_KEY_SORT_DIRECTION, required = false, defaultValue = "ASC") String sortDirection,
+        @RequestParam(name = FILTER_KEY_SORT_PROPERTY, required = false, defaultValue = "name") String sortOnProperty,
         HttpServletRequest request
     ) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         Map<String, Object> filters = this.buildFiltersMap(request.getParameterMap());
         Page<Spell> results = filters.size() > 0
-            ? spellService.getSpellsFiltered(filters, pageNumber, pageSize, sortDirection)
-            : spellService.getSpells(pageNumber, pageSize, sortDirection);
+            ? spellService.getSpellsFiltered(filters, pageNumber, pageSize, sortDirection, sortOnProperty)
+            : spellService.getSpells(pageNumber, pageSize, sortDirection, sortOnProperty);
 
         return new EntityPageResponse<>(
             (int) results.getTotalElements(),

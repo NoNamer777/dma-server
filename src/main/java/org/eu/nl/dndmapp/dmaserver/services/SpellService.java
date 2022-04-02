@@ -2,6 +2,7 @@ package org.eu.nl.dndmapp.dmaserver.services;
 
 import org.eu.nl.dndmapp.dmaserver.models.entities.Spell;
 import org.eu.nl.dndmapp.dmaserver.models.entities.Spell.SpellBuilder;
+import org.eu.nl.dndmapp.dmaserver.models.exceptions.DataMismatchException;
 import org.eu.nl.dndmapp.dmaserver.models.exceptions.EntityNotFoundException;
 import org.eu.nl.dndmapp.dmaserver.models.filters.Filter;
 import org.eu.nl.dndmapp.dmaserver.repositories.SpellRepository;
@@ -29,9 +30,11 @@ public class SpellService {
         this.spellsRepo = spellsRepo;
     }
 
-    public Page<Spell> getSpells(Integer pageNumber, Integer pageSize, String sortDirection) {
+    public Page<Spell> getSpells(Integer pageNumber, Integer pageSize, String sortDirection, String sortOnProperty) {
+        if (!isPropertySortable(sortOnProperty)) throw new DataMismatchException("Cannot sort of property: '%s'", sortOnProperty);
+
         return spellsRepo.findAll(
-            PageRequest.of(pageNumber, pageSize, Sort.Direction.fromString(sortDirection), "name")
+            PageRequest.of(pageNumber, pageSize, Sort.Direction.fromString(sortDirection), sortOnProperty)
         );
     }
 
@@ -39,7 +42,8 @@ public class SpellService {
         Map<String, Object> filters,
         Integer pageNumber,
         Integer pageSize,
-        String sortDirection
+        String sortDirection,
+        String sortOnProperty
     ) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         SpellBuilder spellBuilder = new SpellBuilder();
         ExampleMatcher matcher = ExampleMatcher.matching();
@@ -66,12 +70,18 @@ public class SpellService {
                 .withIgnoreCase()
         );
 
-        return spellsRepo.findAll(exampleSpell, PageRequest.of(pageNumber, pageSize, Sort.Direction.fromString(sortDirection), "name"));
+        if (!isPropertySortable(sortOnProperty)) throw new DataMismatchException("Cannot sort of property: '%s'", sortOnProperty);
+
+        return spellsRepo.findAll(exampleSpell, PageRequest.of(pageNumber, pageSize, Sort.Direction.fromString(sortDirection), sortDirection));
     }
 
     public Spell getSpell(UUID id) {
         return spellsRepo
             .findById(id)
             .orElseThrow(() -> new EntityNotFoundException(String.format("No Spell was found by ID '%s'", id)));
+    }
+
+    private boolean isPropertySortable(String propertyName) {
+        return SPELL_FILTERS.stream().map(Filter::getProperty).collect(Collectors.toList()).contains(propertyName);
     }
 }
