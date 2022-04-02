@@ -1,5 +1,6 @@
 package org.eu.nl.dndmapp.dmaserver.controllers;
 
+import org.eu.nl.dndmapp.dmaserver.models.EntityPageResponse;
 import org.eu.nl.dndmapp.dmaserver.models.entities.Spell;
 import org.eu.nl.dndmapp.dmaserver.services.SpellService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,18 +27,26 @@ public class SpellRestController {
     }
 
     @GetMapping
-    public Page<Spell> getSpells(
+    public EntityPageResponse<Spell> getSpells(
         @RequestParam(name = FILTER_KEY_PAGE_NUMBER, required = false, defaultValue = "0") Integer pageNumber,
         @RequestParam(name = FILTER_KEY_PAGE_SIZE, required = false, defaultValue = "20") Integer pageSize,
         @RequestParam(name = FILTER_KEY_SORT_DIRECTION, required = false, defaultValue = "ASC") String sortDirection,
+        @RequestParam(name = FILTER_KEY_SORT_PROPERTY, required = false, defaultValue = "name") String sortOnProperty,
         HttpServletRequest request
     ) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         Map<String, Object> filters = this.buildFiltersMap(request.getParameterMap());
+        Page<Spell> results = filters.size() > 0
+            ? spellService.getSpellsFiltered(filters, pageNumber, pageSize, sortDirection, sortOnProperty)
+            : spellService.getSpells(pageNumber, pageSize, sortDirection, sortOnProperty);
 
-        if (filters.size() > 0) {
-            return spellService.getSpellsFiltered(filters, pageNumber, pageSize, sortDirection);
-        }
-        return spellService.getSpells(pageNumber, pageSize, sortDirection);
+        return new EntityPageResponse<>(
+            (int) results.getTotalElements(),
+            pageSize,
+            results.getTotalPages(),
+            results.getNumber() + 1,
+            sortDirection,
+            results.getContent()
+        );
     }
 
     @GetMapping("/{id}")
