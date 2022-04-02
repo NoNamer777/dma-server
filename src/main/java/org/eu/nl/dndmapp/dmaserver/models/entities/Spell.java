@@ -8,58 +8,87 @@ import org.eu.nl.dndmapp.dmaserver.models.enums.MagicSchool;
 import org.eu.nl.dndmapp.dmaserver.models.enums.SpellComponent;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "`spell`")
 public class Spell extends NamedEntity {
-    @Column(name = "`level`", columnDefinition = "TINYINT NOT NULL DEFAULT 0")
+    @Column(
+        name = "`level`",
+        columnDefinition = "TINYINT NOT NULL DEFAULT 0"
+    )
     private Integer level;
 
-    @Column(name = "`magic_school`", columnDefinition = "VARCHAR(64) NOT NULL")
+    @Column(
+        name = "`magic_school`",
+        columnDefinition = "VARCHAR(64) NOT NULL"
+    )
     @Convert(converter = MagicSchoolConverter.class)
     private MagicSchool magicSchool;
 
-    @Column(name = "`ritual`", columnDefinition = "TINYINT NOT NULL DEFAULT 0")
+    @Column(
+        name = "`ritual`",
+        columnDefinition = "TINYINT NOT NULL DEFAULT 0"
+    )
     private Boolean ritual;
 
-    @Column(name = "`casting_time`", columnDefinition = "VARCHAR(16) NOT NULL")
+    @Column(
+        name = "`casting_time`",
+        columnDefinition = "VARCHAR(16) NOT NULL"
+    )
     private String castingTime;
 
-    @Column(name = "`range`", columnDefinition = "VARCHAR(16) NOT NULL")
+    @Column(
+        name = "`range`",
+        columnDefinition = "VARCHAR(16) NOT NULL"
+    )
     private String range;
 
-    @Column(name = "`concentration`", columnDefinition = "TINYINT NOT NULL DEFAULT 0")
+    @Column(
+        name = "`concentration`",
+        columnDefinition = "TINYINT NOT NULL DEFAULT 0"
+    )
     private Boolean concentration;
 
-    @Column(name = "`duration`", columnDefinition = "VARCHAR(16) NOT NULL")
+    @Column(
+        name = "`duration`",
+        columnDefinition = "VARCHAR(16) NOT NULL"
+    )
     private String duration;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Convert(converter = SpellComponentConverter.class)
-    @Column(name = "`component`", columnDefinition = "VARCHAR(16)")
+    @Column(
+        name = "`component`",
+        columnDefinition = "VARCHAR(16)"
+    )
     @JoinTable(
         name = "`spell_component`",
-        joinColumns = @JoinColumn(name = "`spell_id`", columnDefinition = "VARCHAR(64)")
+        joinColumns = @JoinColumn(
+            name = "`spell_id`",
+            columnDefinition = "VARCHAR(64)"
+    ))
+    @JsonManagedReference
+    private final Set<SpellComponent> components = new HashSet<>();
+
+    @JsonManagedReference
+    @OneToMany(
+        mappedBy = "id.spell",
+        fetch = FetchType.EAGER
     )
-    private final Set<SpellComponent> components = new HashSet<>();;
+    private final Set<SpellMaterial> materials = new HashSet<>();
 
     @JsonManagedReference
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "id.spell")
-    private final Set<SpellMaterial> materials = new HashSet<>();;
-
-    @JsonManagedReference
-    @OneToMany(mappedBy = "spell", fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(
+        mappedBy = "spell",
+        fetch = FetchType.EAGER
+    )
     private final Set<SpellDescription> descriptions = new HashSet<>();
 
     /* CONSTRUCTORS */
 
-    public Spell() {
-        super();
-    }
+    public Spell() {}
 
     public Spell(String id, String name) {
         super(id, name);
@@ -249,14 +278,8 @@ public class Spell extends NamedEntity {
         private String range;
         private Boolean concentration;
         private String duration;
-        private final List<SpellComponent> components;
-        private final List<SpellMaterial> materials;
-        private final List<SpellDescription> descriptions;
 
         public SpellBuilder() {
-            this.components = new ArrayList<>();
-            this.materials = new ArrayList<>();
-            this.descriptions = new ArrayList<>();
         }
 
         public Spell build() {
@@ -269,10 +292,6 @@ public class Spell extends NamedEntity {
             spell.setRange(this.range);
             spell.setConcentration(this.concentration);
             spell.setDuration(this.duration);
-
-            spell.addAllComponents(this.components);
-            spell.addAllMaterials(this.materials);
-            spell.addAllDescriptions(this.descriptions);
 
             return spell;
         }
@@ -327,24 +346,6 @@ public class Spell extends NamedEntity {
 
         public SpellBuilder withDuration(String duration) {
             this.duration = duration;
-
-            return this;
-        }
-
-        public SpellBuilder withComponents(List<SpellComponent> components) {
-            this.components.addAll(components);
-
-            return this;
-        }
-
-        public SpellBuilder withMaterials(List<SpellMaterial> materials) {
-            this.materials.addAll(materials);
-
-            return this;
-        }
-
-        public SpellBuilder withDescriptions(List<SpellDescription> descriptions) {
-            this.descriptions.addAll(descriptions);
 
             return this;
         }
