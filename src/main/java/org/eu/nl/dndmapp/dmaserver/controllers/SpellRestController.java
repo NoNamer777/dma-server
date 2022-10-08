@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -43,7 +44,7 @@ public class SpellRestController {
             (int) results.getTotalElements(),
             pageSize,
             results.getTotalPages(),
-            results.getNumber() + 1,
+            results.getNumber(),
             sortDirection,
             results.getContent()
         );

@@ -19,7 +19,7 @@ public class EntityPageResponse<E> {
     /** The total number of pages that encompasses the whole dataset. */
     private final int totalPages;
 
-    /** The current page of the dataset. */
+    /** The current page of the dataset, Zero-indexed */
     private final int pageNumber;
 
     /**
