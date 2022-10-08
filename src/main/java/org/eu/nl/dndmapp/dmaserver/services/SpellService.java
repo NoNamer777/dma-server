@@ -72,7 +72,7 @@ public class SpellService {
 
         if (!isPropertySortable(sortOnProperty)) throw new DataMismatchException("Cannot sort of property: '%s'", sortOnProperty);
 
-        return spellsRepo.findAll(exampleSpell, PageRequest.of(pageNumber, pageSize, Sort.Direction.fromString(sortDirection), sortDirection));
+        return spellsRepo.findAll(exampleSpell, PageRequest.of(pageNumber, pageSize, Sort.Direction.fromString(sortDirection), sortOnProperty));
     }
 
     public Spell getSpell(UUID id) {
